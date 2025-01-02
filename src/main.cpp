@@ -1,0 +1,243 @@
+#include "Nibbler/Nibbler.hpp"
+
+struct Arguments
+{
+	Nibbler::RendererAPI::API api = Nibbler::RendererAPI::API::SDL3;
+	int8_t	game_width = 20;
+	int8_t	game_height = 20;
+	bool	parent = true;
+	bool	no_client = false;
+	std::chrono::seconds timeout = std::chrono::seconds(10);
+	const char* host = "localhost";
+	int			port = 8080;
+};
+
+static const char *help_message = R"(Usage: nibbler [options]
+  Options:
+    --help                 Show the usage message and exit.
+    --backend  -b          Specify the rendering backend.
+    --width    -w          Set the width of the game area. Use with --height.
+    --height   -h          Set the height of the game area. Use with --width.
+    --server,  --no-client Only run the server, without a game window.
+    --join,    -j          Only run the client, without a server. A server should be running already.
+    --timeout              Set the timeout.
+    --host                 Set the host server address.
+    --port                 Set the host server port.
+
+Default game size is 20,20.
+Available backends are 'SDL3', 'GLFW' or 'Allegro'.
+Default rendering backend is SDL3.)";
+
+static void	show_help_message_and_exit()
+{
+	std::cout << help_message << std::endl;
+	std::exit(0);
+}
+
+static void	throw_unknown_option(const char *option)
+{
+	std::cout << "Nibbler: unknown option '" << option << "'" << std::endl;
+	std::exit(1);
+}
+
+static void	throw_missing_argument(const char *option)
+{
+	std::cout << "Nibbler: option '" << option << "' requires an argument" << std::endl;
+	std::exit(1);
+}
+
+static void	throw_invalid_argument(const char *option, const char *argument, const char *usage)
+{
+	std::cout << "Nibbler: invalid argument '" << argument << "' for option '" << option << "'" << std::endl;
+	std::cout << usage << std::endl;
+	std::exit(1);
+}
+
+static bool	parse_options(int argc, const char *const *argv, Arguments& arguments)
+{
+	bool size;
+
+	if (argc == 1)
+		return true;
+
+	for (int i = 1; i < argc; i++)
+	{
+		if (std::strcmp(argv[i], "--help") == 0)
+			show_help_message_and_exit();
+
+		if (std::strcmp(argv[i], "-w") == 0 || std::strcmp(argv[i], "-h") == 0
+			|| std::strcmp(argv[i], "--width") == 0|| std::strcmp(argv[i], "--height") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			for (int j = 0; argv[i][j]; j++)
+				if (!std::isdigit(argv[i][j]))
+					throw_invalid_argument(argv[i - 1], argv[i], "Expected a numeric positive value");
+			if (argv[i - 1][1] == 'w' || argv[i - 1][2] == 'w')
+			{
+				arguments.game_width = std::atoi(argv[i]);
+				if (arguments.game_width < 7)
+					throw_invalid_argument(argv[i - 1], argv[i], "Minimum area size is 7");
+				if (arguments.game_width > 50)
+					throw_invalid_argument(argv[i - 1], argv[i], "Nibbler: maximum area size is 50");
+			}
+			else
+			{
+				arguments.game_height = std::atoi(argv[i]);
+				if (arguments.game_height < 7)
+					throw_invalid_argument(argv[i - 1], argv[i], "Minimum area size is 7");
+				if (arguments.game_height > 50)
+					throw_invalid_argument(argv[i - 1], argv[i], "Nibbler: maximum area size is 50");
+			}
+			size = true;
+		}
+		else if (std::strcmp(argv[i], "-b") == 0 || std::strcmp(argv[i], "--backend") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			if (std::strcmp(argv[i], "SDL3") == 0 || std::strcmp(argv[i], "SDL") == 0 || std::strcmp(argv[i], "sdl") == 0)
+				arguments.api = Nibbler::RendererAPI::API::SDL3;
+			else if (std::strcmp(argv[i], "GLFW") == 0 || std::strcmp(argv[i], "glfw") == 0)
+				arguments.api = Nibbler::RendererAPI::API::GLFW;
+			else if (std::strcmp(argv[i], "Allegro") == 0 || std::strcmp(argv[i], "allegro") == 0)
+				arguments.api = Nibbler::RendererAPI::API::Allegro;
+			else
+				throw_invalid_argument(argv[i - 1], argv[i], "Available backends are:\n  - SDL3, SDL, sdl\n  - GLFW, glfw");
+			size = true;
+		}
+		else if (std::strcmp(argv[i], "--no-client") == 0 || std::strcmp(argv[i], "--server") == 0)
+		{
+			arguments.parent = true;
+			arguments.no_client = true;
+		}
+		else if (std::strcmp(argv[i], "-j") == 0 || std::strcmp(argv[i], "--join") == 0 || std::strcmp(argv[i], "--client") == 0)
+		{
+			arguments.parent = false;
+			arguments.no_client = false;
+		}
+		else if (std::strcmp(argv[i], "--timeout") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			for (int j = 0; argv[i][j]; j++)
+				if (!std::isdigit(argv[i][j]))
+					throw_invalid_argument(argv[i - 1], argv[i], "Expected a numeric positive value");
+			arguments.timeout = std::chrono::seconds(std::atoi(argv[i]));
+		}
+		else if (std::strcmp(argv[i], "--host") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			for (int j = 0; argv[i][j]; j++)
+				if (!std::isdigit(argv[i][j]) && !std::isalnum(argv[i][j] && argv[i][j] != '.'))
+					throw_invalid_argument(argv[i - 1], argv[i], "Invalid host");
+			arguments.host = argv[i];
+		}
+		else if (std::strcmp(argv[i], "--port") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			for (int j = 0; argv[i][j]; j++)
+				if (!std::isdigit(argv[i][j]))
+					throw_invalid_argument(argv[i - 1], argv[i], "Invalid port");
+			arguments.port = std::atoi(argv[i]);
+		}
+		else
+			throw_unknown_option(argv[i]);
+	}
+	
+	if (!arguments.parent && size)
+		Nibbler::Log::Warn("Size argument ignored: not a server");
+	return true;
+}
+
+static void	run_client(Arguments arguments)
+{
+	std::chrono::seconds	timeout(10);
+	Nibbler::Timer timer;
+
+	if (arguments.no_client)
+		return ;
+
+	if (arguments.parent)
+	{
+		while (true)
+		{
+			if (timer.ElapsedSeconds() > timeout)
+			{
+				Nibbler::Log::Error("Timeout. Is server running?");
+				return ;
+			}
+
+			if (Nibbler::Server::Running())
+				break;
+		}
+	}
+	Nibbler::ClientConfig config = {
+		.api = arguments.api,
+		.host = arguments.host,
+		.port = arguments.port,
+	};
+
+	Nibbler::Client	client(config);
+	client.Run();
+}
+
+int	main(int argc, char **argv)
+{
+	Nibbler::Timer timer;
+	Arguments arguments;
+
+	Nibbler::Log::Init();
+
+	if (!parse_options(argc, argv, arguments))
+		return (1);
+	
+#ifdef _WIN32
+	int status;
+	WSADATA	wsaData;
+	status = WSAStartup(WINSOCK_VERSION, &wsaData);
+	NIB_ASSERT(status == 0, "WSAStartup(): {}", WSAGetLastError());
+
+	NIB_NOTUSED(status);
+#endif
+
+	Nibbler::g_ApplicationRunning = true;
+
+	if (arguments.parent)
+	{
+		std::thread t1(run_client, arguments);
+
+		int _area_size_difference = std::abs(arguments.game_width - arguments.game_height);
+		_area_size_difference = _area_size_difference ? _area_size_difference : 1;
+		int tick_rate = ((arguments.game_width + arguments.game_height) / 2) * _area_size_difference;
+		uint64_t ns_per_tick = std::max(Nibbler::NS_PER_SECOND / tick_rate, Nibbler::NS_PER_TICK);
+
+		Nibbler::ServerConfig config = {
+			.host = arguments.host,
+			.port = arguments.port,
+			.game_width = arguments.game_width,
+			.game_height = arguments.game_height,
+			.ns_per_tick = ns_per_tick,
+		};
+		Nibbler::Server::Init(config);
+		Nibbler::Server::Run();
+
+		t1.join();
+		Nibbler::Server::Shutdown();
+	}
+	else
+	{
+		run_client(arguments);
+	}
+
+#ifdef _WIN32
+	WSACleanup();
+#endif
+	return (0);
+}
