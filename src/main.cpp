@@ -34,9 +34,10 @@ static void	show_help_message_and_exit()
 	std::exit(0);
 }
 
-static void	throw_unknown_option(const char *option)
+static void	throw_unknown_option(const char* program_name, const char *option)
 {
-	std::cout << "Nibbler: unknown option '" << option << "'" << std::endl;
+	std::cout << "Nibbler: unknown option '" << option << "'" << std::endl
+	<< "Try './" << program_name << " --help' for more information." << std::endl;
 	std::exit(1);
 }
 
@@ -148,7 +149,7 @@ static bool	parse_options(int argc, const char *const *argv, Arguments& argument
 			arguments.port = std::atoi(argv[i]);
 		}
 		else
-			throw_unknown_option(argv[i]);
+			throw_unknown_option(argv[0], argv[i]);
 	}
 	
 	if (!arguments.parent && size)

@@ -29,11 +29,7 @@ AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
     al_install_mouse();
 
 	al_set_new_window_position(INT_MAX, INT_MAX);
-<<<<<<< HEAD
 	al_set_new_display_option(ALLEGRO_VSYNC, config.vsync, ALLEGRO_SUGGEST); // vsync 1 means forced on, 2 means forced off.
-=======
-	al_set_new_display_refresh_rate(FPS_CAP);
->>>>>>> a814dca147e30119c9be80f3851f0f11928e895b
 	_display = al_create_display(config.width, config.height);
 	NIB_ASSERT(_display != nullptr, "al_create_display()");
 
