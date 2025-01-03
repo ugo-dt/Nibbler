@@ -266,34 +266,13 @@ void	Client::DrawSquare(int8_t x, int8_t y, const vec4& color, bool filled)
 		(winsize.y / (float)_game.height / winsize.y) * 0.9f,
 	};
 
-	// if (rect.w < rect.h)
-	// {
-	// 	rect.h = rect.w;
+	if (rect.w < rect.h)
+		rect.h = rect.w;
+	else
+		rect.w = rect.h;
 
-	// 	rect.x = (x * rect.w) + 0.05f;
-	// 	rect.y = (y * rect.h) + 0.05f * _game.height;
-	// 	if (_game.height % 2 != 0)
-	// 		rect.y += 0.05f;
-	// }
-	// else if (rect.w > rect.h)
-	// {
-	// 	rect.w = rect.h;
-
-	// 	rect.x = (x * rect.w) + 0.05f * _game.width;
-	// 	if (_game.width % 2 != 0)
-	// 		rect.x += 0.05f;
-	// 	rect.y = (y * rect.h) + 0.05f;
-	// }
-	// else
-	{
-		if (rect.w < rect.h)
-			rect.h = rect.w;
-		else
-			rect.w = rect.h;
-
-		rect.x = (x * rect.w) + 0.05f;
-		rect.y = (y * rect.h) + 0.05f;
-	}
+	rect.x = (x * rect.w) + 0.05f;
+	rect.y = (y * rect.h) + 0.05f;
 
 	if (filled)
 		RenderCommand::FillRect(rect, color);
