@@ -111,14 +111,14 @@ constexpr Ref<T> CreateRef(Args&& ... args)
 namespace Nibbler
 {
 
-constexpr int FPS_CAP = 60;
-constexpr int TICK_RATE = 10;
-constexpr auto NS_PER_SECOND = 1'000'000'000LL;
-constexpr auto NS_PER_FRAME = NS_PER_SECOND / FPS_CAP;
-constexpr auto NS_PER_TICK = NS_PER_SECOND / TICK_RATE;
+constexpr int	FPS_CAP = 60;
+constexpr int	TICK_RATE = 10;
+constexpr auto	NS_PER_SECOND = 1'000'000'000LL;
+constexpr auto	NS_PER_FRAME = NS_PER_SECOND / FPS_CAP;
+constexpr auto	NS_PER_TICK = NS_PER_SECOND / TICK_RATE;
 
-using Clock = std::chrono::high_resolution_clock;
-
+constexpr vec4	COLOR_BLACK = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+constexpr vec4	COLOR_WHITE = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 constexpr vec4	COLOR_BOARD_1 = vec4(0.67f, 0.84f, 0.32f, 1.0f);
 constexpr vec4	COLOR_BOARD_2 = vec4(0.64f, 0.78f, 0.29f, 1.0f);
 constexpr vec4	COLOR_BG = vec4(0.34f, 0.54f, 0.2f, 1.0f);
@@ -127,17 +127,15 @@ constexpr vec4	COLOR_SNAKE0_HEAD = vec4(0.24f, 0.14f, 0.6f, 1.0f);
 constexpr vec4	COLOR_SNAKE0_BODY = vec4(0.34f, 0.24f, 0.7f, 1.0f);
 constexpr vec4	COLOR_SNAKE1_HEAD = vec4(0.14f, 0.8f, 0.75f, 1.0f);
 constexpr vec4	COLOR_SNAKE1_BODY = vec4(0.24f, 0.9f, 0.85f, 1.0f);
-
-constexpr vec4	COLOR_SNAKE2_HEAD = vec4(0.9f, 0.9f, 0.9f, 1.0f);
+constexpr vec4	COLOR_SNAKE2_HEAD = vec4(0.85f, 0.85f, 0.85f, 1.0f);
 constexpr vec4	COLOR_SNAKE2_BODY = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 constexpr vec4	COLOR_SNAKE3_HEAD = vec4(0.9f, 0.0f, 0.85f, 1.0f);
 constexpr vec4	COLOR_SNAKE3_BODY = vec4(1.0f, 0.0f, 0.95f, 1.0f);
 
-constexpr vec4	COLOR_BLACK = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-constexpr vec4	COLOR_WHITE = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
 constexpr uint32_t	MAX_CLIENTS = 2;
 constexpr uint8_t	SNAKE_DEFAULT_SIZE = 4;
+
+using Clock = std::chrono::high_resolution_clock;
 
 #ifdef _WIN32
 using NibblerSocket = SOCKET;

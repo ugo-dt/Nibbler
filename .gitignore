@@ -13,10 +13,7 @@ allegro_primitives-5.2.dll
 allegro-5.2.dll
 NibblerAllegro.dll
 NibblerAllegro.so
-imgui.ini
 
 SDL3
 allegro
 glfw
-
-lib/imgui

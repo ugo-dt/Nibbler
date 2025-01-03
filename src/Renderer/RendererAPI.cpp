@@ -24,11 +24,10 @@ const char*	RendererAPI::GetLibraryName(API api)
 }
 
 #ifdef _WIN32
-	using LibraryHandleP = HINSTANCE;
+	static HINSTANCE	HANDLE = nullptr;
 #else
-	using LibraryHandleP = void*;
+	static void*		HANDLE = nullptr;
 #endif
-static LibraryHandleP	HANDLE = nullptr;
 
 void	RendererAPI::Destroy(RendererAPI* renderer_api)
 {
