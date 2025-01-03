@@ -189,6 +189,25 @@ static void	run_client(Arguments arguments)
 	client.Run();
 }
 
+static void	run_server(Arguments arguments)
+{
+	int _area_size_difference = std::abs(arguments.game_width - arguments.game_height);
+	_area_size_difference = _area_size_difference ? _area_size_difference : 1;
+	int tick_rate = ((arguments.game_width + arguments.game_height) / 2) * _area_size_difference;
+	uint64_t ns_per_tick = std::max(Nibbler::NS_PER_SECOND / tick_rate, Nibbler::NS_PER_TICK);
+
+	Nibbler::ServerConfig config = {
+		.host = arguments.host,
+		.port = arguments.port,
+		.game_width = arguments.game_width,
+		.game_height = arguments.game_height,
+		.ns_per_tick = ns_per_tick,
+	};
+
+	Nibbler::Server::Init(config);
+	Nibbler::Server::Run();
+}
+
 int	main(int argc, char **argv)
 {
 	Nibbler::Timer timer;
@@ -212,25 +231,17 @@ int	main(int argc, char **argv)
 
 	if (arguments.parent)
 	{
-		std::thread t1(run_client, arguments);
-
-		int _area_size_difference = std::abs(arguments.game_width - arguments.game_height);
-		_area_size_difference = _area_size_difference ? _area_size_difference : 1;
-		int tick_rate = ((arguments.game_width + arguments.game_height) / 2) * _area_size_difference;
-		uint64_t ns_per_tick = std::max(Nibbler::NS_PER_SECOND / tick_rate, Nibbler::NS_PER_TICK);
-
-		Nibbler::ServerConfig config = {
-			.host = arguments.host,
-			.port = arguments.port,
-			.game_width = arguments.game_width,
-			.game_height = arguments.game_height,
-			.ns_per_tick = ns_per_tick,
-		};
-		Nibbler::Server::Init(config);
-		Nibbler::Server::Run();
-
-		t1.join();
-		Nibbler::Server::Shutdown();
+		if (arguments.no_client)
+		{
+			run_server(arguments);
+		}
+		else
+		{
+			std::thread t1(run_server, arguments);
+			run_client(arguments);
+			t1.join();
+			Nibbler::Server::Shutdown();
+		}
 	}
 	else
 	{

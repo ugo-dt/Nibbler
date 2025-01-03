@@ -10,21 +10,19 @@ NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPICo
 
 SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
 {
+	bool status;
+
+	NIB_NOTUSED(status);
+
 	Log::Init();
-#ifdef NIB_RELEASE
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-#else
-	bool status = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+	status = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 	NIB_ASSERT(status == true && "Failed to init SDL");
 	Log::Info("Initialized SDL.");
-#endif
 
-	_window = SDL_CreateWindow(config.title, config.width, config.height, 0);
-	NIB_ASSERT(_window != nullptr, "SDL_CreateWindow(): {}", SDL_GetError());
-	_renderer = SDL_CreateRenderer(_window, nullptr);
-	NIB_ASSERT(_renderer != nullptr, "SDL_CreateRenderer(): {}", SDL_GetError());
+	status = SDL_CreateWindowAndRenderer(config.title, config.width, config.height, 0, &_window, &_renderer);
+	NIB_ASSERT(status == true, "SDL_CreateWindowAndRenderer(): {}", SDL_GetError());
+
 	SDL_SetRenderVSync(_renderer, config.vsync);
-
 	SDL_SetRenderLogicalPresentation(_renderer, config.width, config.height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	_event_callback = config.event_callback;
