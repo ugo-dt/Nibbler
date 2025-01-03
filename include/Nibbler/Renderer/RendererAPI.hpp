@@ -71,18 +71,20 @@ public:
 
 	static RendererAPI*	Create(API api, const RendererAPIConfig& config);
 
-private:
+public:
 #ifdef _WIN32
-	using LibraryHandle = HINSTANCE;
+	using LibraryHandleP = HINSTANCE;
 #else
-	using LibraryHandle = void*;
+	using LibraryHandleP = void*;
 #endif
-	static LibraryHandle	_handle;
+
+protected:
+	LibraryHandleP	_handle;
 
 private:
 	static const char*	GetLibraryName(API api);
 };
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config);
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle);
 
 } // Nibbler

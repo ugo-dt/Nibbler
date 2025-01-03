@@ -5,35 +5,6 @@
 namespace Nibbler
 {
 
-std::string	GetLastNetworkError()
-{
-#ifdef _WIN32
-	DWORD	errorMessageID = GetLastError();
-	if (errorMessageID == 0)
-		abort();
-
-	LPSTR messageBuffer = nullptr;
-	//Ask Win32 to give us the string version of that message ID.
-	//The parameters we pass in, tell Win32 to create the buffer that holds the message for us (because we don't yet know how long the message string will be).
-	size_t size = FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		errorMessageID,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPSTR)&messageBuffer, 0, NULL
-	);
-	
-	std::string message(messageBuffer, size);
-	message.pop_back(); // Remove newline character
-	LocalFree(messageBuffer);
-	return message;
-#else
-	if (errno == 0)
-		return std::string("No error");
-	return message;
-#endif
-}
-
 bool	g_ApplicationRunning = true;
 
 Client::Client(const ClientConfig& config)
@@ -152,7 +123,7 @@ void	Client::Run()
 		ImGui::SameLine();
 		if (ImGui::Button("Exit"))
 			Close();
-        ImGui::End();
+		ImGui::End();
 
 		if (Server::Running())
 			Server::RenderImGuiDebug();
@@ -282,8 +253,11 @@ bool	Client::OnEvent(Event& event)
 void	Client::DrawSquare(int8_t x, int8_t y, const vec4& color, bool filled)
 {
 	NIB_ASSERT(x >= 0 && x < _game.width && y >= 0 && y < _game.height, "DrawSquare(): tried to draw out of bounds ({}, {})", x, y);
+	NIB_ASSERT(_game.width > 0 && _game.height > 0);
 
 	ivec2 winsize = Renderer::GetWindowSize();
+
+	NIB_ASSERT(winsize.x > 0 && winsize.y > 0);
 
 	Rect rect = {
 		0.0f,
@@ -292,24 +266,31 @@ void	Client::DrawSquare(int8_t x, int8_t y, const vec4& color, bool filled)
 		(winsize.y / (float)_game.height / winsize.y) * 0.9f,
 	};
 
-	if (rect.w < rect.h)
+	// if (rect.w < rect.h)
+	// {
+	// 	rect.h = rect.w;
+
+	// 	rect.x = (x * rect.w) + 0.05f;
+	// 	rect.y = (y * rect.h) + 0.05f * _game.height;
+	// 	if (_game.height % 2 != 0)
+	// 		rect.y += 0.05f;
+	// }
+	// else if (rect.w > rect.h)
+	// {
+	// 	rect.w = rect.h;
+
+	// 	rect.x = (x * rect.w) + 0.05f * _game.width;
+	// 	if (_game.width % 2 != 0)
+	// 		rect.x += 0.05f;
+	// 	rect.y = (y * rect.h) + 0.05f;
+	// }
+	// else
 	{
-		rect.h = rect.w;
-		rect.x = (x * rect.w) + 0.05f;
-		rect.y = (y * rect.h) + 0.05f * _game.height;
-		if (_game.height % 2 != 0)
-			rect.y += 0.05f;
-	}
-	else if (rect.w > rect.h)
-	{
-		rect.w = rect.h;
-		rect.x = (x * rect.w) + 0.05f * _game.width;
-		if (_game.width % 2 != 0)
-			rect.x += 0.05f;
-		rect.y = (y * rect.h) + 0.05f;
-	}
-	else
-	{
+		if (rect.w < rect.h)
+			rect.h = rect.w;
+		else
+			rect.w = rect.h;
+
 		rect.x = (x * rect.w) + 0.05f;
 		rect.y = (y * rect.h) + 0.05f;
 	}

@@ -19,7 +19,7 @@ namespace Nibbler
 class glfwRendererAPI : public RendererAPI
 {
 public:
-	glfwRendererAPI(const RendererAPIConfig& config);
+	glfwRendererAPI(const RendererAPIConfig& config, LibraryHandleP handle);
 	~glfwRendererAPI();
 
 	void	SetWindowTitle(const std::string& title) override;

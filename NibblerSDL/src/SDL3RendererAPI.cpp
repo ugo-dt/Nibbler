@@ -3,13 +3,15 @@
 namespace Nibbler
 {
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config)
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle)
 {
-	return new SDL3RendererAPI(config);
+	return new SDL3RendererAPI(config, handle);
 }
 
-SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
+SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config, LibraryHandleP handle)
 {
+	_handle = handle;
+	std::cout << _handle << std::endl;
 	Log::Init();
 #ifdef NIB_RELEASE
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
@@ -19,7 +21,7 @@ SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
 	Log::Info("Initialized SDL.");
 #endif
 
-	_window = SDL_CreateWindow(config.title, config.width, config.height, SDL_WINDOW_RESIZABLE);
+	_window = SDL_CreateWindow(config.title, config.width, config.height, 0);
 	NIB_ASSERT(_window != nullptr, "SDL_CreateWindow(): {}", SDL_GetError());
 	_renderer = SDL_CreateRenderer(_window, nullptr);
 	NIB_ASSERT(_renderer != nullptr, "SDL_CreateRenderer(): {}", SDL_GetError());
@@ -31,11 +33,13 @@ SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
 
 	Log::Info("Created SDL Window '{}' ({}, {}).", config.title, config.width, config.height);
 
+	std::cout << "LOLOL" << std::endl;
+
 	// ImGui
 	IMGUI_CHECKVERSION();
 	_imgui_ctx =  ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
     ImGui::StyleColorsDark();

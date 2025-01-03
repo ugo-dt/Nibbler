@@ -10,13 +10,14 @@ void	WindowSizeCallback(GLFWwindow* window, int width, int height);
 void	WindowCloseCallback(GLFWwindow* window);
 int		KeyCodeToGLFWKey(KeyCode key);
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config)
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle)
 {
-	return new glfwRendererAPI(config);
+	return new glfwRendererAPI(config, handle);
 }
 
-glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config)
+glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config, LibraryHandleP handle)
 {
+	_handle = handle;
     Log::Init();
 #ifdef NIB_RELEASE
 	glfwInit();
@@ -54,7 +55,7 @@ glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config)
 	IMGUI_CHECKVERSION();
 	_imgui_ctx =  ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
     ImGui::StyleColorsDark();

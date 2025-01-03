@@ -23,10 +23,9 @@ const char*	RendererAPI::GetLibraryName(API api)
 	return nullptr;
 }
 
-RendererAPI::LibraryHandle	RendererAPI::_handle;
-
 RendererAPI::~RendererAPI()
 {
+	std::cout << _handle << std::endl;
 	if (_handle)
 	{
 		#ifdef _WIN32
@@ -34,13 +33,13 @@ RendererAPI::~RendererAPI()
 		#else
 			dlclose(_handle);
 		#endif
+		Log::Info("Closed library.");
 	}
-	Log::Info("Closed library.");
 }
 
 RendererAPI*	RendererAPI::Create(API api, const RendererAPIConfig& config)
 {
-	typedef RendererAPI* CreateRenderAPICallback(const RendererAPIConfig&);
+	typedef RendererAPI* CreateRenderAPICallback(const RendererAPIConfig&, LibraryHandleP handle);
 
 	const char* library_name = GetLibraryName(api);
 
@@ -57,7 +56,8 @@ RendererAPI*	RendererAPI::Create(API api, const RendererAPIConfig& config)
 	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)dlsym(handle, "Nibbler_CreateRenderAPI");
 	NIB_ASSERT(Nibbler_CreateRenderAPI, "No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
 #endif
-	return Nibbler_CreateRenderAPI(config);
+	std::cout << handle << std::endl;
+	return Nibbler_CreateRenderAPI(config, handle);
 }
 
 } // Nibbler

@@ -27,8 +27,6 @@ else
   NIBBLER_SDL_SHARED = -shared
 endif
 
-$(info $(NIBBLER_SDL_OBJS))
-
 all: $(NIBBLER_SDL)
 
 $(NIBBLER_SDL): $(NIBBLER_SDL_OBJS)

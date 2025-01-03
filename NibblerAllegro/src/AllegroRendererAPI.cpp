@@ -6,15 +6,16 @@ namespace Nibbler
 KeyCode ALLEGROKeyToKeyCode(int key);
 int KeyCodeToALLEGROKey(KeyCode key);
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config)
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle)
 {
-	return new AllegroRendererAPI(config);
+	return new AllegroRendererAPI(config, handle);
 }
 
-AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
+AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config, LibraryHandleP handle)
 	: _event_callback(config.event_callback),
 	  _winsize(config.width, config.height)
 {
+	_handle = handle;
     Log::Init();
 #ifdef NIB_RELEASE
 	al_install_system(ALLEGRO_VERSION_INT, nullptr);
@@ -46,7 +47,7 @@ AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
 	IMGUI_CHECKVERSION();
 	_imgui_ctx =  ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
     ImGui::StyleColorsDark();
