@@ -10,14 +10,13 @@ void	WindowSizeCallback(GLFWwindow* window, int width, int height);
 void	WindowCloseCallback(GLFWwindow* window);
 int		KeyCodeToGLFWKey(KeyCode key);
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle)
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config)
 {
-	return new glfwRendererAPI(config, handle);
+	return new glfwRendererAPI(config);
 }
 
-glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config, LibraryHandleP handle)
+glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config)
 {
-	_handle = handle;
     Log::Init();
 #ifdef NIB_RELEASE
 	glfwInit();

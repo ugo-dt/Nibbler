@@ -23,41 +23,49 @@ const char*	RendererAPI::GetLibraryName(API api)
 	return nullptr;
 }
 
-RendererAPI::~RendererAPI()
+#ifdef _WIN32
+	using LibraryHandleP = HINSTANCE;
+#else
+	using LibraryHandleP = void*;
+#endif
+static LibraryHandleP	HANDLE = nullptr;
+
+void	RendererAPI::Destroy(RendererAPI* renderer_api)
 {
-	std::cout << _handle << std::endl;
-	if (_handle)
+	delete renderer_api;
+
+	if (HANDLE)
 	{
 		#ifdef _WIN32
-			FreeLibrary(_handle);
+			FreeLibrary(HANDLE);
 		#else
-			dlclose(_handle);
+			dlclose(HANDLE);
 		#endif
+		HANDLE = nullptr;
 		Log::Info("Closed library.");
 	}
 }
 
 RendererAPI*	RendererAPI::Create(API api, const RendererAPIConfig& config)
 {
-	typedef RendererAPI* CreateRenderAPICallback(const RendererAPIConfig&, LibraryHandleP handle);
+	typedef RendererAPI* CreateRenderAPICallback(const RendererAPIConfig&);
 
 	const char* library_name = GetLibraryName(api);
 
 #ifdef _WIN32
-	HINSTANCE handle = LoadLibrary(library_name);
-	NIB_ASSERT(handle != nullptr, "LoadLibrary(): Cannot load library '{}': {}", library_name, GetLastError());
+	HANDLE = LoadLibrary(library_name);
+	NIB_ASSERT(HANDLE != nullptr, "LoadLibrary(): Cannot load library '{}': {}", library_name, GetLastError());
 
-	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)((void *)GetProcAddress(handle, "Nibbler_CreateRenderAPI"));
+	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)((void *)GetProcAddress(HANDLE, "Nibbler_CreateRenderAPI"));
 	NIB_ASSERT(Nibbler_CreateRenderAPI, "No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
 #else
-	void* handle = dlopen(library_name, RTLD_NOW);
-	NIB_ASSERT(handle != nullptr, "dlopen(): Cannot load library '{}': {}", library_name, dlerror());
+	HANDLE = dlopen(library_name, RTLD_NOW);
+	NIB_ASSERT(HANDLE != nullptr, "dlopen(): Cannot load library '{}': {}", library_name, dlerror());
 
-	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)dlsym(handle, "Nibbler_CreateRenderAPI");
+	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)dlsym(HANDLE, "Nibbler_CreateRenderAPI");
 	NIB_ASSERT(Nibbler_CreateRenderAPI, "No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
 #endif
-	std::cout << handle << std::endl;
-	return Nibbler_CreateRenderAPI(config, handle);
+	return Nibbler_CreateRenderAPI(config);
 }
 
 } // Nibbler

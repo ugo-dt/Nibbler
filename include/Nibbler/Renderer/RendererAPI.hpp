@@ -43,7 +43,7 @@ public:
 	};
 
 public:
-	virtual ~RendererAPI();
+	virtual ~RendererAPI() = default;
 
 	virtual void	SetWindowTitle(const std::string& title) = 0;
 	virtual void	BeginFrame() = 0;
@@ -70,21 +70,12 @@ public:
 	virtual void	FillRect(const Rect& rect, const vec4& color) = 0;
 
 	static RendererAPI*	Create(API api, const RendererAPIConfig& config);
-
-public:
-#ifdef _WIN32
-	using LibraryHandleP = HINSTANCE;
-#else
-	using LibraryHandleP = void*;
-#endif
-
-protected:
-	LibraryHandleP	_handle;
+	static void			Destroy(RendererAPI* renderer_api);
 
 private:
 	static const char*	GetLibraryName(API api);
 };
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle);
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config);
 
 } // Nibbler

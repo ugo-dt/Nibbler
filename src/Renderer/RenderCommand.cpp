@@ -3,7 +3,7 @@
 namespace Nibbler
 {
 
-RendererAPI*					RenderCommand::_renderer_api = nullptr;
+RendererAPI*	RenderCommand::_renderer_api = nullptr;
 
 void	RenderCommand::Init(RendererAPI::API api, const RendererAPIConfig& config)
 {
@@ -14,7 +14,7 @@ void	RenderCommand::Init(RendererAPI::API api, const RendererAPIConfig& config)
 
 void	RenderCommand::Shutdown()
 {
-	delete _renderer_api;
+	RendererAPI::Destroy(_renderer_api);
 	_renderer_api = nullptr;
 }
 

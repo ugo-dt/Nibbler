@@ -16,7 +16,7 @@ namespace Nibbler
 class SDL3RendererAPI : public RendererAPI
 {
 public:
-	SDL3RendererAPI(const RendererAPIConfig& config, LibraryHandleP handle);
+	SDL3RendererAPI(const RendererAPIConfig& config);
 	~SDL3RendererAPI();
 
 	void	SetWindowTitle(const std::string& title) override;

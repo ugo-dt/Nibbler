@@ -3,15 +3,13 @@
 namespace Nibbler
 {
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle)
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config)
 {
-	return new SDL3RendererAPI(config, handle);
+	return new SDL3RendererAPI(config);
 }
 
-SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config, LibraryHandleP handle)
+SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
 {
-	_handle = handle;
-	std::cout << _handle << std::endl;
 	Log::Init();
 #ifdef NIB_RELEASE
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
@@ -32,8 +30,6 @@ SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config, LibraryHandleP
 	_event_callback = config.event_callback;
 
 	Log::Info("Created SDL Window '{}' ({}, {}).", config.title, config.width, config.height);
-
-	std::cout << "LOLOL" << std::endl;
 
 	// ImGui
 	IMGUI_CHECKVERSION();

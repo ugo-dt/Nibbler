@@ -15,7 +15,7 @@ namespace Nibbler
 class AllegroRendererAPI : public RendererAPI
 {
 public:
-	AllegroRendererAPI(const RendererAPIConfig& config, LibraryHandleP handle);
+	AllegroRendererAPI(const RendererAPIConfig& config);
 	~AllegroRendererAPI();
 
 	void	SetWindowTitle(const std::string& title) override;

@@ -6,16 +6,15 @@ namespace Nibbler
 KeyCode ALLEGROKeyToKeyCode(int key);
 int KeyCodeToALLEGROKey(KeyCode key);
 
-NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config, RendererAPI::LibraryHandleP handle)
+NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPIConfig& config)
 {
-	return new AllegroRendererAPI(config, handle);
+	return new AllegroRendererAPI(config);
 }
 
-AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config, LibraryHandleP handle)
+AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
 	: _event_callback(config.event_callback),
 	  _winsize(config.width, config.height)
 {
-	_handle = handle;
     Log::Init();
 #ifdef NIB_RELEASE
 	al_install_system(ALLEGRO_VERSION_INT, nullptr);
