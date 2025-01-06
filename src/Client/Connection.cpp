@@ -27,6 +27,8 @@ void	Client::Connect(const char *host, const int port)
 	addr.sin_family = AF_INET;
 	if (std::strcmp(host, "localhost") == 0)
 		host = "127.0.0.1";
+
+	Log::Info("[CLIENT] Connecting to {}:{}...", host, port);
 	addr.sin_addr.s_addr = inet_addr(host);
 	addr.sin_port = htons(port);
 	
@@ -49,7 +51,7 @@ void	Client::Connect(const char *host, const int port)
 	_nfds = 1;
 	_poll_fds = new pollfd[_nfds];
 	_poll_fds[0].fd = _socket;
-	_poll_fds[0].events = POLLRDNORM | POLLWRNORM;
+	_poll_fds[0].events = POLLIN | POLLRDNORM | POLLWRNORM;
 
 	return;
 }
@@ -116,7 +118,7 @@ void	Client::ReceivePacket()
 			Disconnect();
 			return ;
 		}
-		if (_poll_fds[0].revents & (POLLRDNORM))
+		if (_poll_fds[0].revents & (POLLRDNORM | POLLIN))
 		{
 			SquareType squares[_game.width][_game.height];
 			ssize_t bytes = 0;
@@ -164,9 +166,7 @@ std::string	GetLastNetworkError()
 	LocalFree(messageBuffer);
 	return message;
 #else
-	if (errno == 0)
-		return std::string("No error");
-	return message;
+	return strerror(errno);
 #endif
 }
 

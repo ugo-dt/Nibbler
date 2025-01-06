@@ -41,12 +41,12 @@ void	Server::Init(const ServerConfig& config)
 	_nfds = MAX_CLIENTS + 1;
 	_poll_fds = new pollfd[_nfds];
 	_poll_fds[0].fd = _socket;
-	_poll_fds[0].events = POLLRDNORM;
+	_poll_fds[0].events = POLLIN | POLLRDNORM;
 
 	for (NibblerNfds_t i = 1; i < _nfds; i++)
 	{
 		_poll_fds[i].fd = INVALID_SOCKET;
-		_poll_fds[i].events = POLLRDNORM | POLLWRNORM; // Equivalent to POLLIN | POLLOUT
+		_poll_fds[i].events = POLLIN | POLLRDNORM | POLLWRNORM;
 	}
 
 	_game = CreateScope<Game>(config.game_width, config.game_height);
@@ -228,7 +228,7 @@ void	Server::Update()
 				_poll_fds[i].revents = 0;
 				continue;
 			}
-			if (_poll_fds[i].revents & POLLRDNORM)
+			if (_poll_fds[i].revents & POLLIN)
 			{
 				ReceivePacket(_poll_fds[i].fd);
 			}
