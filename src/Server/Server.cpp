@@ -33,9 +33,13 @@ void	Server::Init(const ServerConfig& config)
 	NIB_ASSERT(_socket != INVALID_SOCKET, "socket(): {}", GetLastNetworkError());
 
 	opt = 1;
+#ifdef _WIN32
 	status = setsockopt(_socket, SOL_SOCKET, SO_EXCLUSIVEADDRUSE, (const char *)&opt, sizeof(int));
+#else
+	status = setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof(int));
+#endif
 	NIB_ASSERT(status != -1, "setsockopt(): {}", GetLastNetworkError());
-
+	
 	Log::Info("[SERVER] Created socket {}", _socket);
 
 	_nfds = MAX_CLIENTS + 1;

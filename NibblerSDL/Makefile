@@ -13,8 +13,8 @@ __sdl3_path	= $(NIBBLER_SDL_PATH)/SDL3
 
 NIBBLER_SDL	= $(NIBBLER_SDL_PATH)/NibblerSDL$(DYLIB_EXT)
 
-NIBBLER_SDL_SRC 	= $(NIBBLER_SDL_PATH)/src/SDL3RendererAPI.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp  $(__imgui_path)/backends/imgui_impl_sdl3.cpp $(__imgui_path)/backends/imgui_impl_sdlrenderer3.cpp
-NIBBLER_SDL_OBJS	= $(NIBBLER_SDL_SRC:.cpp=.o) $(__imgui_objs)
+NIBBLER_SDL_SRC 	= $(NIBBLER_SDL_PATH)/src/SDL3RendererAPI.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp
+NIBBLER_SDL_OBJS	= $(NIBBLER_SDL_SRC:.cpp=.o)
 NIBBLER_SDL_INCLUDE	= -I $(NIBBLER_SDL_PATH)/include -I $(NIBBLER_SDL_PATH)/SDL3/include -I $(NIBBLER_PATH)/include
 
 INCLUDE += $(NIBBLER_SDL_INCLUDE)
@@ -27,21 +27,18 @@ else
   NIBBLER_SDL_SHARED = -shared
 endif
 
+IMGUI_SDL_BACKEND_SRC = $(__imgui_path)/backends/imgui_impl_sdl3.cpp $(__imgui_path)/backends/imgui_impl_sdlrenderer3.cpp
+IMGUI_SDL_BACKEND_OBJS =  $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/imgui/%.o,$(IMGUI_SDL_BACKEND_SRC))
+
 all: $(NIBBLER_SDL)
 
-$(NIBBLER_SDL): $(NIBBLER_SDL_OBJS)
+$(NIBBLER_SDL): $(NIBBLER_SDL_OBJS) $(__imgui_objs) $(IMGUI_SDL_BACKEND_OBJS)
 	$(SILENT)mkdir -p $(dir $@)
-	$(SILENT)$(CXX) $(NIBBLER_SDL_OBJS) -o $(NIBBLER_SDL) $(NIBBLER_SDL_LDFLAGS) $(LDFLAGS) $(NIBBLER_SDL_SHARED)
+	$(SILENT)$(CXX) $(NIBBLER_SDL_OBJS) $(__imgui_objs) $(IMGUI_SDL_BACKEND_OBJS) -o $(NIBBLER_SDL) $(NIBBLER_SDL_LDFLAGS) $(LDFLAGS) $(NIBBLER_SDL_SHARED)
 	@echo "$(COLOR_GREEN) $(NIBBLER_SDL) ready!$(COLOR_DEFAULT)"
 
 $(NIBBLER_SDL_PATH)/src/%.o: $(NIBBLER_SDL_PATH)/src/%.cpp
 	@echo "$(COLOR_GREY)Compiling $<...$(COLOR_DEFAULT)"
-	$(SILENT)$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-	@echo "$(COLOR_DEFAULT)OK"
-
-$(__imgui_path)/backends/%.o: $(__imgui_path)/backends/%.cpp
-	@echo "$(COLOR_GREY)Compiling $<...$(COLOR_DEFAULT)"	
-	$(SILENT)mkdir -p $(dir $@)
 	$(SILENT)$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 clean::

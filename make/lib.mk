@@ -19,7 +19,6 @@ __imgui_path		= $(__default_lib_path)/imgui
 __imgui_backend		= sdl3_renderer
 __imgui_platform	= sdl3
 __imgui_src			= $(wildcard $(__imgui_path)/*.cpp)
-
 __imgui_objs		= $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/imgui/%.o,$(__imgui_src))
 
 __lib_include		=	-I $(__default_lib_path) -I $(__sdl3_path)/include -I $(__imgui_path)

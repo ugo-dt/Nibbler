@@ -13,8 +13,8 @@ __allegro_path	= $(NIBBLER_ALLEGRO_PATH)/allegro
 
 NIBBLER_ALLEGRO	= $(NIBBLER_ALLEGRO_PATH)/NibblerAllegro$(DYLIB_EXT)
 
-NIBBLER_ALLEGRO_SRC 	= $(NIBBLER_ALLEGRO_PATH)/src/AllegroRendererAPI.cpp $(NIBBLER_ALLEGRO_PATH)/src/KeyCodes.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp $(__imgui_path)/backends/imgui_impl_allegro5.cpp
-NIBBLER_ALLEGRO_OBJS	= $(NIBBLER_ALLEGRO_SRC:.cpp=.o) $(__imgui_objs)
+NIBBLER_ALLEGRO_SRC 	= $(NIBBLER_ALLEGRO_PATH)/src/AllegroRendererAPI.cpp $(NIBBLER_ALLEGRO_PATH)/src/KeyCodes.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp
+NIBBLER_ALLEGRO_OBJS	= $(NIBBLER_ALLEGRO_SRC:.cpp=.o)
 NIBBLER_ALLEGRO_INCLUDE	= -I $(NIBBLER_ALLEGRO_PATH)/include -I $(NIBBLER_ALLEGRO_PATH)/allegro/build/include -I $(NIBBLER_PATH)/include
 
 INCLUDE += $(NIBBLER_ALLEGRO_INCLUDE)
@@ -27,17 +27,19 @@ else
   NIBBLER_ALLEGRO_SHARED = -shared
 endif
 
+IMGUI_ALLEGRO_BACKEND_SRC = $(__imgui_path)/backends/imgui_impl_allegro5.cpp
+IMGUI_ALLEGRO_BACKEND_OBJS =  $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/imgui/%.o,$(IMGUI_ALLEGRO_BACKEND_SRC))
+
 all: $(NIBBLER_ALLEGRO)
 
-$(NIBBLER_ALLEGRO): $(NIBBLER_ALLEGRO_OBJS)
+$(NIBBLER_ALLEGRO): $(NIBBLER_ALLEGRO_OBJS) $(__imgui_objs) $(IMGUI_ALLEGRO_BACKEND_OBJS)
 	$(SILENT)mkdir -p $(dir $@)
-	$(SILENT)$(CXX) $(NIBBLER_ALLEGRO_OBJS) -o $(NIBBLER_ALLEGRO) $(NIBBLER_ALLEGRO_LDFLAGS) $(LDFLAGS) $(NIBBLER_ALLEGRO_SHARED)
+	$(SILENT)$(CXX) $(NIBBLER_ALLEGRO_OBJS) $(__imgui_objs) $(IMGUI_ALLEGRO_BACKEND_OBJS) -o $(NIBBLER_ALLEGRO) $(NIBBLER_ALLEGRO_LDFLAGS) $(LDFLAGS) $(NIBBLER_ALLEGRO_SHARED)
 	@echo "$(COLOR_GREEN) $(NIBBLER_ALLEGRO) ready!$(COLOR_DEFAULT)"
 
 $(NIBBLER_ALLEGRO_PATH)/src/%.o: $(NIBBLER_ALLEGRO_PATH)/src/%.cpp
 	@echo "$(COLOR_GREY)Compiling $<...$(COLOR_DEFAULT)"
 	$(SILENT)$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-	@echo "$(COLOR_DEFAULT)OK"
 
 clean::
 	$(SILENT)rm -f $(NIBBLER_ALLEGRO_OBJS)
