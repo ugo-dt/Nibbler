@@ -33,7 +33,7 @@ void	Server::Init(const ServerConfig& config)
 	NIB_ASSERT(_socket != INVALID_SOCKET, "socket(): {}", GetLastNetworkError());
 
 	opt = 1;
-	status = setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof(int));
+	status = setsockopt(_socket, SOL_SOCKET, SO_EXCLUSIVEADDRUSE, (const char *)&opt, sizeof(int));
 	NIB_ASSERT(status != -1, "setsockopt(): {}", GetLastNetworkError());
 
 	Log::Info("[SERVER] Created socket {}", _socket);
@@ -70,6 +70,8 @@ void	Server::BindSocketAndListen(const char *host, const int port)
 	addr.sin_port = htons(port);
 	status = bind(_socket, (struct sockaddr *)&addr, sizeof(addr));
 	NIB_ASSERT(status != -1, "bind(): {}", GetLastNetworkError());
+
+	std::cout << GetLastNetworkError() << std::endl;
 	Log::Info("[SERVER] Bound socket {}", _socket);
 
 #ifdef _WIN32

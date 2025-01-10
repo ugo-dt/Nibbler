@@ -101,7 +101,7 @@ void	Client::Run()
 			frames = 0;
 			lastSecondTime = currentTime;
 		}
-		
+
 		Update();
 		Render();
 		frames++;
@@ -161,7 +161,7 @@ void	Client::InitRenderer(RendererAPI::API api)
 			.event_callback = NIB_BIND_EVENT_FN(Client::OnEvent),
 		}
 	);
-	}
+}
 
 bool	Client::OnKeyPressed(KeyPressedEvent& event)
 {

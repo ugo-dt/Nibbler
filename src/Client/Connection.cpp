@@ -148,7 +148,7 @@ std::string	GetLastNetworkError()
 #ifdef _WIN32
 	DWORD	errorMessageID = GetLastError();
 	if (errorMessageID == 0)
-		abort();
+		return "No error";
 
 	LPSTR messageBuffer = nullptr;
 	//Ask Win32 to give us the string version of that message ID.
