@@ -34,7 +34,7 @@ public:
 	static void	SetDrawColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 	static void	DrawRect(const Rect& rect, const vec4& color);
 	static void	FillRect(const Rect& rect, const vec4& color);
-	
+
 private:
 	friend class Input;
 	friend class Renderer;
