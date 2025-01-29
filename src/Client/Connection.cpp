@@ -99,6 +99,14 @@ void	Client::SendEnableMultiplayerPacket()
 	SendPacket(packet);
 }
 
+void	Client::SendDisableMultiplayerPacket()
+{
+	ClientPacket	packet = {};
+
+	packet.type = htons((uint16_t)ClientPacketType::DisableLocalMultiplayer);
+	SendPacket(packet);
+}
+
 void	Client::ReceivePacket()
 {
 #ifdef _WIN32

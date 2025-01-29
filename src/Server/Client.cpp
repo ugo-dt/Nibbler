@@ -66,12 +66,8 @@ void	Server::RemoveClient(NibblerSocket socket)
 			_poll_fds[i].fd = INVALID_SOCKET;
 
 			_game->ResetSnake(i - 1);
-			if (_clients[i - 1].with_local_mutliplayer)
-			{
-				_game->ResetSnake(i - 1 + MAX_CLIENTS);
-				_clients[i - 1].with_local_mutliplayer = false;
-			}
-			
+			RemoveLocalPlayer(i - 1);
+
 			Log::Info("[SERVER] Removed client {} (socket {})", i - 1, socket);
 			return ;
 		}
@@ -137,11 +133,14 @@ void	Server::ReceivePacket(NibblerSocket socket)
 
 	switch (type)
 	{
+		case ClientPacketType::Input:
+			AddInputToQueue(it_client->id, ClientInput(ntohs(packet.payload.input)));
+			break;
 		case ClientPacketType::EnableLocalMultiplayer:
 			AddLocalPlayer(it_client->id);
 			break;
-		case ClientPacketType::Input:
-			AddInputToQueue(it_client->id, ClientInput(ntohs(packet.payload.input)));
+		case ClientPacketType::DisableLocalMultiplayer:
+			RemoveLocalPlayer(it_client->id);
 			break;
 		default:
 			break;
@@ -175,6 +174,21 @@ void	Server::AddLocalPlayer(uint32_t client_index)
 	_game->AddLocalPlayer(client_index);
 
 	Log::Info("[SERVER] New player for client {}", client_index);
+}
+
+void	Server::RemoveLocalPlayer(uint32_t client_index)
+{
+	if (!ClientExists(client_index))
+	{
+		Log::Warn("[SERVER] AddLocalPlayer(): no client with id {}", client_index);
+		return ;
+	}
+	
+	if (_clients[client_index].with_local_mutliplayer)
+	{
+		_game->ResetSnake(client_index + MAX_CLIENTS);
+		_clients[client_index].with_local_mutliplayer = false;
+	}
 }
 
 } // Nibbler

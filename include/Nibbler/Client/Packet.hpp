@@ -8,7 +8,8 @@ namespace Nibbler
 enum class ClientPacketType : uint8_t
 {
 	None = 0,
-	Input, EnableLocalMultiplayer, Disconnect,
+	Input, EnableLocalMultiplayer,
+	DisableLocalMultiplayer, Disconnect,
 };
 
 enum class ClientInput : uint8_t

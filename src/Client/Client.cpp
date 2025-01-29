@@ -13,7 +13,8 @@ Client::Client(const ClientConfig& config)
 	  _poll_fds(nullptr),
 	  _nfds(1),
 	  _id(-1),
-	  _requested_direction(Direction::Right)
+	  _requested_direction(Direction::Right),
+	  _local_multiplayer(false)
 {
 	Connect(config.host, config.port);
 
@@ -118,8 +119,23 @@ void	Client::Run()
         ImGui::RadioButton("GLFW",    (int *)&_request_new_api, RendererAPI::API::GLFW); ImGui::SameLine();
         ImGui::RadioButton("Allegro", (int *)&_request_new_api, RendererAPI::API::Allegro);
 
-		if (ImGui::Button("Add player"))
-			SendEnableMultiplayerPacket();
+		if (!_local_multiplayer)
+		{
+			if (ImGui::Button("Add player"))
+			{
+				_local_multiplayer = true;
+				SendEnableMultiplayerPacket();
+			}
+		}
+		else
+		{
+			if (ImGui::Button("Remove player"))
+			{
+				_local_multiplayer = false;
+				SendDisableMultiplayerPacket();
+			}
+		}
+
 		ImGui::SameLine();
 		if (ImGui::Button("Exit"))
 			Close();

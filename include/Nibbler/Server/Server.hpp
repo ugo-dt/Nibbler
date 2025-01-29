@@ -41,6 +41,7 @@ public:
 
 	static bool	ClientExists(uint32_t index);
 	static void	AddLocalPlayer(uint32_t client_index);
+	static void	RemoveLocalPlayer(uint32_t client_index);
 	static bool	ClientHasLocalMultiplayer(uint32_t client_index);
 
 	static void	RenderImGuiDebug();

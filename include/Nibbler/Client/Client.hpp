@@ -48,6 +48,7 @@ private:
 
 	void	SendPacket(ClientPacket& packet);
 	void	SendEnableMultiplayerPacket();
+	void	SendDisableMultiplayerPacket();
 	void	SendInputPacket(ClientInput input);
 
 	void	ReceivePacket();
@@ -69,7 +70,7 @@ private:
 	uint8_t			_id;
 	Direction		_requested_direction;
 
-	Scope<Client>	_local_multiplayer;
+	bool			_local_multiplayer;
 };
 
 } // Nibbler
