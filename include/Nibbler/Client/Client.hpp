@@ -40,6 +40,7 @@ private:
 
 	void	Update();
 	void	Render();
+	void	RenderImGui();
 
 	void	Close();
 
@@ -70,6 +71,7 @@ private:
 	uint8_t			_id;
 	Direction		_requested_direction;
 
+	uint32_t		_fps;
 	bool			_local_multiplayer;
 };
 

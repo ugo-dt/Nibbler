@@ -36,21 +36,21 @@ static void	show_help_message_and_exit()
 
 static void	throw_unknown_option(const char* program_name, const char *option)
 {
-	std::cout << "Nibbler: unknown option '" << option << "'" << std::endl
+	std::cerr << "Nibbler: unknown option '" << option << "'" << std::endl
 	<< "Try './" << program_name << " --help' for more information." << std::endl;
 	std::exit(1);
 }
 
 static void	throw_missing_argument(const char *option)
 {
-	std::cout << "Nibbler: option '" << option << "' requires an argument" << std::endl;
+	std::cerr << "Nibbler: option '" << option << "' requires an argument" << std::endl;
 	std::exit(1);
 }
 
 static void	throw_invalid_argument(const char *option, const char *argument, const char *usage)
 {
-	std::cout << "Nibbler: invalid argument '" << argument << "' for option '" << option << "'" << std::endl;
-	std::cout << usage << std::endl;
+	std::cerr << "Nibbler: invalid argument '" << argument << "' for option '" << option << "'" << std::endl;
+	std::cerr << usage << std::endl;
 	std::exit(1);
 }
 
@@ -159,7 +159,7 @@ static bool	parse_options(int argc, const char *const *argv, Arguments& argument
 
 static void	run_client(Arguments arguments)
 {
-	std::chrono::seconds	timeout(10);
+	std::chrono::seconds	timeout(0);
 	Nibbler::Timer timer;
 
 	if (arguments.no_client)
@@ -171,7 +171,7 @@ static void	run_client(Arguments arguments)
 		{
 			if (timer.ElapsedSeconds() > timeout)
 			{
-				Nibbler::Log::Error("Timeout. Is server running?");
+				Nibbler::Log::Error("Timeout exceeded.");
 				return ;
 			}
 

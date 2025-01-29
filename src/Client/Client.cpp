@@ -14,6 +14,7 @@ Client::Client(const ClientConfig& config)
 	  _nfds(1),
 	  _id(-1),
 	  _requested_direction(Direction::Right),
+	  _fps(0),
 	  _local_multiplayer(false)
 {
 	Connect(config.host, config.port);
@@ -71,15 +72,57 @@ void	Client::Render()
 	}
 }
 
+void	Client::RenderImGui()
+{
+	Renderer::BeginImGui();
+	
+	ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
+	ImGui::Begin("Nibbler Client");
+	ImGui::SeparatorText("Client");
+	ImGui::Text("ID: %d", _id);
+	ImGui::Text("FPS: %d", _fps);
+	// ImGui::Text("Current API:");
+	ImGui::RadioButton("SDL3",    (int *)&_request_new_api, RendererAPI::API::SDL3); ImGui::SameLine();
+	ImGui::RadioButton("GLFW",    (int *)&_request_new_api, RendererAPI::API::GLFW); ImGui::SameLine();
+	ImGui::RadioButton("Allegro", (int *)&_request_new_api, RendererAPI::API::Allegro);
+
+	if (!_local_multiplayer)
+	{
+		if (ImGui::Button("Add player"))
+		{
+			_local_multiplayer = true;
+			SendEnableMultiplayerPacket();
+		}
+	}
+	else
+	{
+		if (ImGui::Button("Remove player"))
+		{
+			_local_multiplayer = false;
+			SendDisableMultiplayerPacket();
+		}
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Exit"))
+		Close();
+	ImGui::End();
+
+	if (Server::Running())
+		Server::RenderImGuiDebug();
+
+	// ImGui::ShowDemoWindow();
+	Renderer::EndImGui();
+}
+
 void	Client::Run()
 {
+	Clock::time_point lastFrameTime = Clock::now();
+	Clock::time_point lastSecondTime = lastFrameTime;
+	int frames;
+
+	frames = 0;
 	_request_new_api = Renderer::GetCurrentAPI();
-
-	auto lastFrameTime = Clock::now();
-	auto lastSecondTime = lastFrameTime;
-
-	int frames = 0, fps = 0;
-
 	while (g_ApplicationRunning)
 	{
 		// Poll events
@@ -98,54 +141,16 @@ void	Client::Run()
 
 		if (std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastSecondTime).count() >= NS_PER_SECOND)
 		{
-			fps = frames;
+			_fps = frames;
 			frames = 0;
 			lastSecondTime = currentTime;
 		}
 
 		Update();
 		Render();
+		RenderImGui();
 		frames++;
 
-		Renderer::BeginImGui();
-		
-		ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
-		ImGui::Begin("Nibbler Client");
-		ImGui::SeparatorText("Client");
-		ImGui::Text("ID: %d", _id);
-		ImGui::Text("FPS: %d", fps);
-		// ImGui::Text("Current API:");
-        ImGui::RadioButton("SDL3",    (int *)&_request_new_api, RendererAPI::API::SDL3); ImGui::SameLine();
-        ImGui::RadioButton("GLFW",    (int *)&_request_new_api, RendererAPI::API::GLFW); ImGui::SameLine();
-        ImGui::RadioButton("Allegro", (int *)&_request_new_api, RendererAPI::API::Allegro);
-
-		if (!_local_multiplayer)
-		{
-			if (ImGui::Button("Add player"))
-			{
-				_local_multiplayer = true;
-				SendEnableMultiplayerPacket();
-			}
-		}
-		else
-		{
-			if (ImGui::Button("Remove player"))
-			{
-				_local_multiplayer = false;
-				SendDisableMultiplayerPacket();
-			}
-		}
-
-		ImGui::SameLine();
-		if (ImGui::Button("Exit"))
-			Close();
-		ImGui::End();
-
-		if (Server::Running())
-			Server::RenderImGuiDebug();
-		
-		// ImGui::ShowDemoWindow();
-		Renderer::EndImGui();
 		Renderer::EndFrame();
 
 		// Cap framerate

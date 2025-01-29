@@ -19,9 +19,14 @@ Game::Game(int8_t width, int8_t height)
 	SpawnApple();
 }
 
+void	Game::ResetSnake(uint32_t client_index)
+{
+	_state.snakes[client_index].Init(_state.width, _state.height, client_index);
+}
+
 void	Game::AddLocalPlayer(uint32_t index)
 {
-	_state.snakes[index + MAX_CLIENTS].Init(_state.width, _state.height, index + MAX_CLIENTS);
+	ResetSnake(index + MAX_CLIENTS);
 }
 
 void	Game::CheckSnakeCollisions(uint32_t snake_index)
@@ -66,11 +71,6 @@ void	Game::Tick()
 			CheckSnakeCollisions(i + MAX_CLIENTS);
 		}
 	}
-}
-
-void	Game::ResetSnake(uint32_t client_index)
-{
-	_state.snakes[client_index].Init(_state.width, _state.height, client_index);
 }
 
 void	Game::SetSnakeRequestedDirection(uint32_t index, Direction direction)

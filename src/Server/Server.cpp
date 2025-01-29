@@ -75,7 +75,6 @@ void	Server::BindSocketAndListen(const char *host, const int port)
 	status = bind(_socket, (struct sockaddr *)&addr, sizeof(addr));
 	NIB_ASSERT(status != -1, "bind(): {}", GetLastNetworkError());
 
-	std::cout << GetLastNetworkError() << std::endl;
 	Log::Info("[SERVER] Bound socket {}", _socket);
 
 #ifdef _WIN32

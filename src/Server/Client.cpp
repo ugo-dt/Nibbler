@@ -173,7 +173,7 @@ void	Server::AddLocalPlayer(uint32_t client_index)
 
 	_game->AddLocalPlayer(client_index);
 
-	Log::Info("[SERVER] New player for client {}", client_index);
+	Log::Info("[SERVER] Enabled local multiplayer for client {}", client_index);
 }
 
 void	Server::RemoveLocalPlayer(uint32_t client_index)
@@ -189,6 +189,8 @@ void	Server::RemoveLocalPlayer(uint32_t client_index)
 		_game->ResetSnake(client_index + MAX_CLIENTS);
 		_clients[client_index].with_local_mutliplayer = false;
 	}
+	
+	Log::Info("[SERVER] Disabled local multiplayer for client {}", client_index);
 }
 
 } // Nibbler
