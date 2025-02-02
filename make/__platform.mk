@@ -9,7 +9,6 @@ include $(NIBBLER_PATH)/make/__core.mk
 
 # Available platforms
 __WIN32__		= win32
-__WIN32__		= win32
 __LINUX__		= linux
 __MACOS__		= darwin
 
