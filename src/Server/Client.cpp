@@ -64,6 +64,7 @@ void	Server::RemoveClient(NibblerSocket socket)
 		{
 			CloseSocket(socket);
 			_poll_fds[i].fd = INVALID_SOCKET;
+			_client_count--;
 
 			_game->ResetSnake(i - 1);
 			RemoveLocalPlayer(i - 1);

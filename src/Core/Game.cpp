@@ -41,7 +41,7 @@ void	Game::CheckSnakeCollisions(uint32_t snake_index)
 
 	if (snake.size() >= (size_t)(_state.width * _state.height))
 	{
-		Log::Info("Snake {} won!");
+		Log::Info("Snake {} won!", snake_index);
 		KillSnake(snake_index);
 	}
 	
