@@ -7,15 +7,9 @@ const char*	RendererAPI::GetLibraryName(API api)
 {
 	switch (api)
 	{
-#ifdef _WIN32
-		case API::SDL3:    return "NibblerSDL/NibblerSDL.dll";
-		case API::GLFW:    return "NibblerGLFW/NibblerGLFW.dll";
-		case API::Allegro: return "NibblerAllegro/NibblerAllegro.dll";
-#else
-		case API::SDL3:    return "NibblerSDL/NibblerSDL.so";
-		case API::GLFW:    return "NibblerGLFW/NibblerGLFW.so";
-		case API::Allegro: return "NibblerAllegro/NibblerAllegro.so";
-#endif
+		case API::SDL3:    return NIBBLER_DYNAMIC_LIB_SDL;
+		case API::GLFW:    return NIBBLER_DYNAMIC_LIB_GLFW;
+		case API::Allegro: return NIBBLER_DYNAMIC_LIB_ALLEGRO;
 		default: break;
 	}
 

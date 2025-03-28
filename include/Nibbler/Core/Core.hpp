@@ -47,13 +47,15 @@
 #if defined(_WIN32)
 #  define NIBBLER_API extern "C" __declspec(dllexport)
 #  define NIBBLERCALL __cdecl
-#  define NIBBLER_DYNAMIC_LIB_SDL "NibblerSDL.dll"
-#  define NIBBLER_DYNAMIC_LIB_GLFW "NibblerGLFW.dll"
+#  define NIBBLER_DYNAMIC_LIB_SDL "NibblerSDL/NibblerSDL.dll"
+#  define NIBBLER_DYNAMIC_LIB_GLFW "NibblerGLFW/NibblerGLFW.dll"
+#  define NIBBLER_DYNAMIC_LIB_ALLEGRO "NibblerAllegro/NibblerAllegro.dll"
 # else
 #  define NIBBLER_API extern "C"
 #  define NIBBLERCALL
-#  define NIBBLER_DYNAMIC_LIB_SDL "./NibblerSDL.so"
-#  define NIBBLER_DYNAMIC_LIB_GLFW "./NibblerGLFW.so"
+#  define NIBBLER_DYNAMIC_LIB_SDL "NibblerSDL/NibblerSDL.so"
+#  define NIBBLER_DYNAMIC_LIB_GLFW "NibblerGLFW/NibblerGLFW.so"
+#  define NIBBLER_DYNAMIC_LIB_ALLEGRO "NibblerAllegro/NibblerAllegro.so"
 #endif
 
 #define BIT(x) (1 << x)

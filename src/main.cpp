@@ -159,7 +159,6 @@ static bool	parse_options(int argc, const char *const *argv, Arguments& argument
 
 static void	run_client(Arguments arguments)
 {
-	std::chrono::seconds	timeout(0);
 	Nibbler::Timer timer;
 
 	if (arguments.no_client)
@@ -169,7 +168,7 @@ static void	run_client(Arguments arguments)
 	{
 		while (true)
 		{
-			if (timer.ElapsedSeconds() > timeout)
+			if (timer.ElapsedSeconds() > arguments.timeout)
 			{
 				Nibbler::Log::Error("Timeout exceeded.");
 				return ;

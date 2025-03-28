@@ -22,8 +22,6 @@ INCLUDE += -I $(NIBBLER_PATH)/include -I $(NIBBLER_PATH)/include/Nibbler -I $(NI
 CFLAGS		+= -DNIBBLER_PATH=\"$(NIBBLER_PATH)/\"
 CXXFLAGS	+= -DNIBBLER_PATH=\"$(NIBBLER_PATH)/\"
 
-$(info Target: $(target))
-
 # Nibbler rendering backends
 include $(NIBBLER_PATH)/NibblerSDL/Makefile
 include $(NIBBLER_PATH)/NibblerGLFW/Makefile
