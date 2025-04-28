@@ -23,7 +23,7 @@ ifeq ($(target),$(__WIN32__))
   NIBBLER_SDL_LDFLAGS = -L $(__sdl3_path)/build -lSDL3.dll
   NIBBLER_SDL_SHARED = -s -shared -Wl,--subsystem,windows
 else
-  NIBBLER_SDL_LDFLAGS = $(shell pkg-config --libs SDL3) -fPIC
+  NIBBLER_SDL_LDFLAGS = $(shell pkg-config --libs sdl3)
   NIBBLER_SDL_SHARED = -shared
 endif
 

@@ -69,14 +69,16 @@ ifeq ($(target),$(__WIN32__))
   CC		= $(__arch)-w64-mingw32-gcc
   CXX		= $(__arch)-w64-mingw32-g++
   AR		= $(__arch)-w64-mingw32-ar
-  LDFLAGS	+= -lmingw32 -lopengl32 -lglu32 -lws2_32 -static
+  LDFLAGS += -lmingw32 -lopengl32 -lglu32 -lws2_32 -static
 else ifeq ($(target),$(__LINUX__))
-  EXE 		= .out
-  LDFLAGS	+= -lm -lGL
+  EXE = .out
+  CFLAGS += -fPIC
+  CXXFLAGS += -fPIC
+  LDFLAGS += -lm -lGL
 else ifeq ($(target),$(__MACOS__))
-  EXE		= .out
-  INCLUDE	+= -I /opt/homebrew/include
-  LDFLAGS	+= -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lncurses
+  EXE = .out
+  INCLUDE += -I /opt/homebrew/include
+  LDFLAGS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lncurses
 endif
 
 endif # __PLATFORM_MK

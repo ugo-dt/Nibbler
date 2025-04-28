@@ -23,7 +23,7 @@ ifeq ($(target),$(__WIN32__))
   NIBBLER_GLFW_LDFLAGS = -L $(__glfw_path)/build/src -lglfw3dll
   NIBBLER_GLFW_SHARED = -s -shared -Wl,--subsystem,windows
 else
-  NIBBLER_GLFW_LDFLAGS = $(shell pkg-config --libs glfw3) -fPIC
+  NIBBLER_GLFW_LDFLAGS = $(shell pkg-config --libs glfw3)
   NIBBLER_GLFW_SHARED = -shared
 endif
 
