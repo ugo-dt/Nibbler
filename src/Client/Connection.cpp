@@ -77,7 +77,7 @@ void	Client::Disconnect()
 
 void	Client::SendPacket(ClientPacket& packet)
 {
-	if (_poll_fds[0].revents & (POLLOUT))
+	if (_poll_fds[0].revents & (POLLWRNORM))
 		if (send(_socket, (const char *)&packet, sizeof(struct ClientPacket), 0) < 0)
 			Log::Warn("[CLIENT] SendPacket(): {}", GetLastNetworkError());
 }

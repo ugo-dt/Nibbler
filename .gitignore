@@ -13,7 +13,3 @@ allegro_primitives-5.2.dll
 allegro-5.2.dll
 NibblerAllegro.dll
 NibblerAllegro.so
-
-SDL3
-allegro
-glfw

@@ -32,14 +32,23 @@ glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config)
     _window = glfwCreateWindow(config.width, config.height, config.title, nullptr, nullptr);
     NIB_ASSERT(_window != nullptr, "glfwCreateWindow() failed.");
 
+    float xscale, yscale;
+    glfwGetWindowContentScale(_window, &xscale, &yscale);
+
+    if (xscale != 1 || yscale != 1)
+        glfwSetWindowSize(_window, config.width / xscale, config.height / yscale);
+
     glfwMakeContextCurrent(_window);
     if (config.vsync)
     {
         glfwSwapInterval(1); // Enable VSync
     }
 
-	glViewport(0, 0, config.width, config.height);
-	glOrtho(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0);
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(_window, &framebufferWidth, &framebufferHeight);
+    glViewport(0, 0, framebufferWidth, framebufferHeight);
+
+    glOrtho(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0);
 
     _event_callback = config.event_callback;
 	event_callback_ptr = &_event_callback;
