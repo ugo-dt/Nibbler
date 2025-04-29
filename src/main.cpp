@@ -54,7 +54,7 @@ static void	throw_invalid_argument(const char *option, const char *argument, con
 	std::exit(1);
 }
 
-static bool	parse_options(int argc, const char *const *argv, Arguments& arguments)
+static bool	parse_options(const int argc, const char *const *argv, Arguments& arguments)
 {
 	bool size;
 

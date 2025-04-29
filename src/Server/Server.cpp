@@ -73,7 +73,12 @@ void	Server::BindSocketAndListen(const char *host, const int port)
 	addr.sin_addr.s_addr = inet_addr(host);
 	addr.sin_port = htons(port);
 	status = bind(_socket, (struct sockaddr *)&addr, sizeof(addr));
-	NIB_ASSERT(status != -1, "bind(): {}", GetLastNetworkError());
+	if (status == -1)
+	{
+		Log::Error("bind(): {} ({}:{})", GetLastNetworkError(), host, port);
+		Shutdown();
+		std::exit(1);
+	}
 
 	Log::Info("[SERVER] Bound socket {}", _socket);
 

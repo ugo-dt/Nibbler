@@ -21,8 +21,9 @@ Client::Client(const ClientConfig& config)
 
 	std::vector<SquareType> hvec;
 	hvec.resize(_game.height, SquareType::Empty);
-	for (int x = 0; x < _game.width; x++)
-		_game.squares.push_back(hvec);
+	_game.squares.resize(_game.width, hvec);
+	// for (int x = 0; x < _game.width; x++)
+	// 	_game.squares.push_back(hvec);
 
 	InitRenderer(config.api);
 }

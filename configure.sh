@@ -20,15 +20,6 @@ else
     echo "SDL3: configured."
 fi
 
-# SDL3
-if [ -d "./NibblerSDL/SDL3/build" ]; then
-    echo "SDL3: Already configured."
-else
-    cmake -S NibblerSDL/SDL3/ -B NibblerSDL/SDL3/build
-    cmake --build NibblerSDL/SDL3/build
-    echo "SDL3: configured."
-fi
-
 # glfw
 if [ -d "./NibblerGLFW/glfw/build" ]; then
     echo "glfw: Already configured."
