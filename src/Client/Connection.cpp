@@ -4,7 +4,7 @@
 namespace Nibbler
 {
 
-void	Client::Connect(const char *host, const int port)
+void	Client::Connect(const char *host, const int port, std::chrono::seconds timeout)
 {
 	struct sockaddr_in addr;
 	int status;
@@ -31,12 +31,25 @@ void	Client::Connect(const char *host, const int port)
 	Log::Info("[CLIENT] Connecting to {}:{}...", host, port);
 	addr.sin_addr.s_addr = inet_addr(host);
 	addr.sin_port = htons(port);
-	
-	status = connect(_socket, (sockaddr *)&addr, sizeof(addr));
-	NIB_ASSERT(status != -1, "connect(): {}: {}", status, GetLastNetworkError());
 
-	if (status == -1)
-		return ;
+	{
+		Timer timer;
+
+		while (true)
+		{
+			status = connect(_socket, (sockaddr *)&addr, sizeof(addr));
+			if (status == 0)
+				break;
+				
+			if (timeout != std::chrono::seconds(-1) && timer.ElapsedSeconds() > timeout)
+			{
+				Nibbler::Log::Error("Timeout exceeded.");
+				Disconnect();
+				std::exit(1);
+			}
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+	}
 
 	struct { uint16_t id, width, height; } handshake;
 	recv(_socket, (char *)&handshake, sizeof(handshake), 0);
@@ -52,8 +65,6 @@ void	Client::Connect(const char *host, const int port)
 	_poll_fds = new pollfd[_nfds];
 	_poll_fds[0].fd = _socket;
 	_poll_fds[0].events = POLLIN | POLLRDNORM | POLLWRNORM;
-
-	return;
 }
 
 void	Client::Disconnect()

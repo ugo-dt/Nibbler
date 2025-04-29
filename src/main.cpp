@@ -124,8 +124,8 @@ static bool	parse_options(int argc, const char *const *argv, Arguments& argument
 				throw_missing_argument(argv[i]);
 			i++;
 			for (int j = 0; argv[i][j]; j++)
-				if (!std::isdigit(argv[i][j]))
-					throw_invalid_argument(argv[i - 1], argv[i], "Expected a numeric positive value");
+				if (!std::isdigit(argv[i][j]) && argv[i][j] != '-')
+					throw_invalid_argument(argv[i - 1], argv[i], "Expected a numeric positive value or -1");
 			arguments.timeout = std::chrono::seconds(std::atoi(argv[i]));
 		}
 		else if (std::strcmp(argv[i], "--host") == 0)
@@ -134,7 +134,7 @@ static bool	parse_options(int argc, const char *const *argv, Arguments& argument
 				throw_missing_argument(argv[i]);
 			i++;
 			for (int j = 0; argv[i][j]; j++)
-				if (!std::isdigit(argv[i][j]) && !std::isalnum(argv[i][j] && argv[i][j] != '.'))
+				if (!std::isalnum(argv[i][j]) && argv[i][j] != '.')
 					throw_invalid_argument(argv[i - 1], argv[i], "Invalid host");
 			arguments.host = argv[i];
 		}
@@ -164,24 +164,11 @@ static void	run_client(Arguments arguments)
 	if (arguments.no_client)
 		return ;
 
-	if (arguments.parent)
-	{
-		while (true)
-		{
-			if (timer.ElapsedSeconds() > arguments.timeout)
-			{
-				Nibbler::Log::Error("Timeout exceeded.");
-				return ;
-			}
-
-			if (Nibbler::Server::Running())
-				break;
-		}
-	}
 	Nibbler::ClientConfig config = {
 		.api = arguments.api,
 		.host = arguments.host,
 		.port = arguments.port,
+		.timeout = arguments.timeout,
 	};
 
 	Nibbler::Client	client(config);

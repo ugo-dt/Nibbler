@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nibbler/Core/Core.hpp"
+#include "Nibbler/Core/Timer.hpp"
 #include "Nibbler/Core/Snake.hpp"
 #include "Nibbler/Client/Packet.hpp"
 #include "Nibbler/Events/ApplicationEvent.hpp"
@@ -25,6 +26,7 @@ struct ClientConfig
 	RendererAPI::API api; 
 	const char* host;
 	int port;
+	std::chrono::seconds timeout;
 };
 
 class Client
@@ -44,7 +46,7 @@ private:
 
 	void	Close();
 
-	void	Connect(const char *host, const int port);
+	void	Connect(const char *host, const int port, std::chrono::seconds timeout);
 	void	Disconnect();
 
 	void	SendPacket(ClientPacket& packet);

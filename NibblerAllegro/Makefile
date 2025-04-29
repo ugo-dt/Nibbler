@@ -15,7 +15,7 @@ NIBBLER_ALLEGRO	= $(NIBBLER_ALLEGRO_PATH)/NibblerAllegro$(DYLIB_EXT)
 
 NIBBLER_ALLEGRO_SRC 	= $(NIBBLER_ALLEGRO_PATH)/src/AllegroRendererAPI.cpp $(NIBBLER_ALLEGRO_PATH)/src/KeyCodes.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp
 NIBBLER_ALLEGRO_OBJS	= $(NIBBLER_ALLEGRO_SRC:.cpp=.o)
-NIBBLER_ALLEGRO_INCLUDE	= -I $(NIBBLER_ALLEGRO_PATH)/include -I $(NIBBLER_ALLEGRO_PATH)/allegro/build/include -I $(NIBBLER_PATH)/include
+NIBBLER_ALLEGRO_INCLUDE	= -I $(NIBBLER_ALLEGRO_PATH)/include -I $(__allegro_path)/include -I $(__allegro_path)/addons/primitives -I $(__allegro_path)/build/include -I $(NIBBLER_PATH)/include
 
 INCLUDE += $(NIBBLER_ALLEGRO_INCLUDE)
 

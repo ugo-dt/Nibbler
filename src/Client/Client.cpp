@@ -17,7 +17,7 @@ Client::Client(const ClientConfig& config)
 	  _fps(0),
 	  _local_multiplayer(false)
 {
-	Connect(config.host, config.port);
+	Connect(config.host, config.port, config.timeout);
 
 	std::vector<SquareType> hvec;
 	hvec.resize(_game.height, SquareType::Empty);
