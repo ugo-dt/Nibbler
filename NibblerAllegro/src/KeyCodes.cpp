@@ -51,7 +51,7 @@ KeyCode ALLEGROKeyToKeyCode(int key)
 		case ALLEGRO_KEY_X:				return Key::X;
 		case ALLEGRO_KEY_Y:				return Key::Y;
 		case ALLEGRO_KEY_Z:				return Key::Z;
-		case ALLEGRO_KEY_OPENBRACE:	return Key::LeftBracket;
+		case ALLEGRO_KEY_OPENBRACE:		return Key::LeftBracket;
 		case ALLEGRO_KEY_BACKSLASH:		return Key::Backslash;
 		case ALLEGRO_KEY_CLOSEBRACE:	return Key::RightBracket;
 		// case ALLEGRO_KEY_GRAVE_ACCENT:	return Key::GraveAccent;

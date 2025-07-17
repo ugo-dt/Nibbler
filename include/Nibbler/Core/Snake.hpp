@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nibbler/Core/Core.hpp"
+#include "Nibbler/Core/Timer.hpp"
 
 namespace Nibbler
 {
@@ -18,7 +19,14 @@ public:
 
 	void	Init(int8_t game_width, int8_t game_height, uint32_t client_index);
 
-	void	Tick();
+	void	Kill();
+	void	Tick(
+		int8_t game_width,
+		int8_t game_height,
+		uint32_t client_index,
+		std::chrono::milliseconds death_timer_ms,
+		std::chrono::milliseconds no_collisions_timer_ms
+	);
 
 	void	SetPos(const i8vec2& pos);
 	void	SetDirection(Direction direction);
@@ -27,6 +35,9 @@ public:
 
 	bool	CollidesWithTail() const;
 	bool	HasSectionAt(int8_t x, int8_t y) const;
+	bool	IsPositionInTail(int8_t x, int8_t y) const;
+	bool	CanCollide() const;
+	bool	Dead() const;
 
 	const std::vector<i8vec2>& Body() const;
 
@@ -44,6 +55,9 @@ private:
 	std::vector<i8vec2>	_body;
 	Direction			_direction;
 	Direction			_requested_direction;
+	Timer				_timer;
+	bool				_dead;
+	bool				_can_collide;
 };
 
 } // Nibbler

@@ -53,7 +53,13 @@ void	Server::Init(const ServerConfig& config)
 		_poll_fds[i].events = POLLIN | POLLRDNORM | POLLWRNORM;
 	}
 
-	_game = CreateScope<Game>(config.game_width, config.game_height);
+	_game = CreateScope<Game>(
+		config.game_width,
+		config.game_height,
+		config.pvp,
+		config.death,
+		config.respawn
+	);
 
 	BindSocketAndListen(config.host, config.port);
 	
@@ -320,7 +326,7 @@ void	Server::RenderImGuiDebug()
 	ImGui::SeparatorText("Server");
 	ImGui::Text("Address: %s:%d", _host.c_str(), _port);
 	ImGui::Text("FPS: %d | TPS: %d", _fps, _tps);
-	ImGui::Text("Clients: %u", _client_count);
+	ImGui::Text("Clients: %u | PvP: %s", _client_count, _game->IsPvPEnabled() ? "ON" : "OFF");
 	if (ImGui::Button(_game->Paused() ? "Resume" : "Pause"))
 		_game->TogglePause();
 	ImGui::SameLine();
@@ -330,6 +336,10 @@ void	Server::RenderImGuiDebug()
 		Tick();
 		_game->Pause();
 	}
+
+	ImGui::SameLine();
+	if (ImGui::Button(_game->IsPvPEnabled() ? "Disable PvP" : "Enable PvP"))
+		_game->TogglePvP();
 	// ImGui::SameLine();
 	// if (ImGui::Button("Update"))
 	// 	Update();

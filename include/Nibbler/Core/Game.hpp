@@ -12,12 +12,21 @@ struct GameState
 	int8_t	height;
 	std::array<Snake, MAX_CLIENTS * 2> snakes; // We multiply by 2 to allow local mulltiplayer for each client.
 	i8vec2	apple;
+	bool	pvp; // if true, snakes can kill each other
+	std::chrono::milliseconds	death_timer_ms;
+	std::chrono::milliseconds	no_collisions_timer_ms;
 };
 
 class Game
 {
 public:
-	Game(int8_t width, int8_t height);
+	Game(
+		int8_t width,
+		int8_t height,
+		bool pvp,
+		std::chrono::milliseconds death_timer_ms,
+		std::chrono::milliseconds no_collisions_timer_ms
+	);
 	~Game() = default;
 
 	Game(Game& game) = delete;
@@ -27,10 +36,12 @@ public:
 
 	void	Pause();
 	void	Resume();
-	void	TogglePause();
-	bool	Paused();
-
 	void	Tick();
+	void	TogglePause();
+	void	TogglePvP();
+
+	bool	Paused() const;
+	bool	IsPvPEnabled() const;
 
 	void	ResetSnake(uint32_t client_index);
 	void	SetSnakeRequestedDirection(uint32_t index, Direction direction);

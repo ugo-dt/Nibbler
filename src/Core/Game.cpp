@@ -4,16 +4,24 @@
 namespace Nibbler
 {
 
-Game::Game(int8_t width, int8_t height)
-	: _state(),
-	  _pause(true),
-	  _rd(),
-	  _rng(_rd()),
-	  _distX(0, width - 1),
-	  _distY(0, height - 1)
+Game::Game(
+	int8_t width,
+	int8_t height,
+	bool pvp,
+	std::chrono::milliseconds death_timer_ms,
+	std::chrono::milliseconds no_collisions_timer_ms
+) : _state(),
+	_pause(true),
+	_rd(),
+	_rng(_rd()),
+	_distX(0, width - 1),
+	_distY(0, height - 1)
 {
 	_state.width = width;
 	_state.height = height;
+	_state.pvp = pvp;
+	_state.death_timer_ms = death_timer_ms;
+	_state.no_collisions_timer_ms = no_collisions_timer_ms;
 	for (uint32_t i = 0; i < MAX_CLIENTS; i++)
 		_state.snakes[i].Init(_state.width, _state.height, i);
 	SpawnApple();
@@ -29,6 +37,11 @@ void	Game::AddLocalPlayer(uint32_t index)
 	ResetSnake(index + MAX_CLIENTS);
 }
 
+void	Game::TogglePvP()
+{
+	_state.pvp = !_state.pvp;
+}
+
 void	Game::CheckSnakeCollisions(uint32_t snake_index)
 {
 	Snake& snake = _state.snakes[snake_index];
@@ -37,6 +50,27 @@ void	Game::CheckSnakeCollisions(uint32_t snake_index)
 		|| snake.CollidesWithTail())
 	{
 		KillSnake(snake_index);
+	}
+
+	if (_state.pvp)
+	{
+		for (uint32_t i = 0; i < _state.snakes.size(); i++)
+		{
+			if (i == snake_index)
+				continue;
+
+			// Snakes are allowed to overlap with other snake heads.
+			// They cannot overlap with a tail.
+			auto& other_snake = _state.snakes[i];
+			if (snake.CanCollide() && other_snake.CanCollide()
+				&& other_snake.IsPositionInTail(snake.PosX(), snake.PosY()))
+			{
+				// Kill both snakes
+				if (snake.IsPositionInTail(other_snake.PosX(), other_snake.PosY()))
+					KillSnake(i);
+				KillSnake(snake_index);
+			}
+		}
 	}
 
 	if (snake.size() >= (size_t)(_state.width * _state.height))
@@ -62,14 +96,15 @@ void	Game::Tick()
 		if (!Server::ClientExists(i))
 			continue;
 
-		_state.snakes[i].Tick();
-		CheckSnakeCollisions(i);
-
+		_state.snakes[i].Tick(_state.width, _state.height, i,
+			_state.death_timer_ms, _state.no_collisions_timer_ms);
 		if (Server::ClientHasLocalMultiplayer(i))
-		{
-			_state.snakes[i + MAX_CLIENTS].Tick();
+			_state.snakes[i + MAX_CLIENTS].Tick(_state.width, _state.height,i + MAX_CLIENTS,
+				_state.death_timer_ms, _state.no_collisions_timer_ms);
+
+		CheckSnakeCollisions(i);
+		if (Server::ClientHasLocalMultiplayer(i))
 			CheckSnakeCollisions(i + MAX_CLIENTS);
-		}
 	}
 }
 
@@ -100,7 +135,7 @@ void	Game::SetSnakeRequestedDirection(uint32_t index, Direction direction)
 
 void	Game::KillSnake(uint32_t index)
 {
-	_state.snakes[index].Init(_state.width, _state.height, index);
+	_state.snakes[index].Kill();
 }
 
 void	Game::Pause()
@@ -118,7 +153,12 @@ void	Game::TogglePause()
 	_pause = !_pause;
 }
 
-bool	Game::Paused()
+bool	Game::IsPvPEnabled() const
+{
+	return _state.pvp;
+}
+
+bool	Game::Paused() const
 {
 	return _pause;
 }

@@ -78,7 +78,7 @@ void	Server::RemoveClient(NibblerSocket socket)
 
 void	Server::Broadcast()
 {
-	auto& state = _game->GetState();
+	const GameState& state = _game->GetState();
 
 	SquareType squares[state.width][state.height];
 
@@ -89,18 +89,24 @@ void	Server::Broadcast()
 	{
 		if (!ClientExists(i))
 			continue;
-
-		const auto& snake = state.snakes[i].Body();
-		squares[snake[0].x][snake[0].y] = (SquareType)((1 << (i + 1)) + 1);
-		for (size_t j = 1; j < snake.size(); j++)
+		
+		if (!state.snakes[i].Dead())
+		{
+			auto& snake = state.snakes[i].Body();
+			squares[snake[0].x][snake[0].y] = (SquareType)((1 << (i + 1)) + 1);
+			for (size_t j = 1; j < snake.size(); j++)
 			squares[snake[j].x][snake[j].y] = (SquareType)((1 << (i + 1)));
+		}
 
 		if (_clients[i].with_local_mutliplayer)
 		{
-			const auto& snake = state.snakes[i + MAX_CLIENTS].Body();
-			squares[snake[0].x][snake[0].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)) + 1);
-			for (size_t j = 1; j < snake.size(); j++)
+			if (!state.snakes[i + MAX_CLIENTS].Dead())
+			{
+				const auto& snake = state.snakes[i + MAX_CLIENTS].Body();
+				squares[snake[0].x][snake[0].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)) + 1);
+				for (size_t j = 1; j < snake.size(); j++)
 				squares[snake[j].x][snake[j].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)));
+			}
 		}
 	}
 

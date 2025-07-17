@@ -6,12 +6,14 @@ namespace Nibbler
 Snake::Snake()
 	: _body(),
 	  _direction(Direction::Right),
-	  _requested_direction(Direction::Right)
+	  _requested_direction(Direction::Right),
+	  _dead(false)
 {
 }
 
 void	Snake::Init(int8_t game_width, int8_t game_height, uint32_t client_index)
 {
+	_dead = false;
 	i8vec2 head_pos = i8vec2(
 		(int8_t)(game_width / 2),
 		(int8_t)(game_height / 2 + client_index)
@@ -33,10 +35,26 @@ void	Snake::Init(int8_t game_width, int8_t game_height, uint32_t client_index)
 	}
 	_direction = Direction::Right;
 	_requested_direction = Direction::Right;
+	_timer.Reset();
+	_can_collide = false;
 }
 
-void	Snake::Tick()
-{
+void	Snake::Tick(
+	int8_t game_width,
+	int8_t game_height,
+	uint32_t client_index,
+	std::chrono::milliseconds death_timer_ms,
+	std::chrono::milliseconds no_collisions_timer_ms
+) {
+	if (_dead)
+	{
+		if (_timer.ElapsedMS() > std::chrono::milliseconds(death_timer_ms))
+			Init(game_width, game_height, client_index);
+		return ;
+	}
+	if (!_can_collide && _timer.ElapsedMS() > std::chrono::milliseconds(no_collisions_timer_ms))
+		_can_collide = true;
+
 	_direction = _requested_direction;
 
     for (size_t i = _body.size() - 1; i > 0; i--)
@@ -63,6 +81,15 @@ void	Snake::Tick()
 		default:
 			break;
     }
+}
+
+void	Snake::Kill()
+{
+	if (_dead)
+		return ;
+	_dead = true;
+	_timer.Reset();
+	_body.clear();
 }
 
 void	Snake::SetPos(const i8vec2& pos)
@@ -100,6 +127,24 @@ bool	Snake::HasSectionAt(int8_t x, int8_t y) const
 		if (_body[i].x == x && _body[i].y == y)
 			return true;
 	return false;
+}
+
+bool	Snake::IsPositionInTail(int8_t x, int8_t y) const
+{
+	for (size_t i = 1; i < _body.size(); i++)
+		if (_body[i].x == x && _body[i].y == y)
+			return true;
+	return false;
+}
+
+bool	Snake::CanCollide() const
+{
+	return _can_collide;
+}
+
+bool	Snake::Dead() const
+{
+	return _dead;
 }
 
 const std::vector<i8vec2>& Snake::Body() const

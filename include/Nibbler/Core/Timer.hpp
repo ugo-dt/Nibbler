@@ -10,7 +10,7 @@ class Timer
 public:
 	Timer();
 	void	Reset();
-	std::chrono::seconds	ElapsedSeconds();
+	std::chrono::seconds		ElapsedSeconds();
 	std::chrono::milliseconds	ElapsedMS();
 
 private:

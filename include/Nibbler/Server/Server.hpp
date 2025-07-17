@@ -24,6 +24,9 @@ struct ServerConfig
 	int8_t		game_width;
 	int8_t		game_height;
 	uint64_t	ns_per_tick;
+	bool		pvp;
+	std::chrono::milliseconds	death;
+	std::chrono::milliseconds	respawn;
 };
 
 class Server

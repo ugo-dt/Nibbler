@@ -10,19 +10,25 @@ struct Arguments
 	std::chrono::seconds timeout = std::chrono::seconds(10);
 	const char* host = "localhost";
 	int			port = 8080;
+	bool		pvp = false;
+	std::chrono::milliseconds	death = std::chrono::milliseconds(1000);
+	std::chrono::milliseconds	respawn = std::chrono::milliseconds(1000);
 };
 
 static const char *help_message = R"(Usage: nibbler [options]
   Options:
-    --help                 Show the usage message and exit.
-    --backend  -b          Specify the rendering backend.
-    --width    -w          Set the width of the game area. Use with --height.
-    --height   -h          Set the height of the game area. Use with --width.
-    --server,  --no-client Only run the server, without a game window.
-    --join,    -j          Only run the client, without a server. A server should be running already.
-    --timeout              Set the timeout.
-    --host                 Set the host server address.
-    --port                 Set the host server port.
+    --help        Show the usage message and exit.
+    --backend  -b Specify the rendering backend.
+    --width    -w Set the width of the game area. Use with --height.
+    --height   -h Set the height of the game area. Use with --width.
+    --server,  -s Only run the server, without a game window.
+    --client,  -c Only run the client, without a server. A game server should be running (see --host, --port).
+    --timeout     Set the timeout.
+    --host        Set the host server address.
+    --port     -p Set the host server port.
+	--pvp         Enable PvP. Snakes can kill each other.
+	--death    -d Set the death timer duration in ms (default=1000ms).
+	--respawn  -r Set the respawn invincibility timer duration in ms (default=1000ms).
 
 Default game size is 20,20.
 Available backends are 'SDL3', 'GLFW' or 'Allegro'.
@@ -108,7 +114,7 @@ static bool	parse_options(const int argc, const char *const *argv, Arguments& ar
 				throw_invalid_argument(argv[i - 1], argv[i], "Available backends are:\n  - SDL3, SDL, sdl\n  - GLFW, glfw");
 			size = true;
 		}
-		else if (std::strcmp(argv[i], "--no-client") == 0 || std::strcmp(argv[i], "--server") == 0)
+		else if (std::strcmp(argv[i], "-s") == 0 || std::strcmp(argv[i], "--server") == 0)
 		{
 			arguments.parent = true;
 			arguments.no_client = true;
@@ -138,7 +144,7 @@ static bool	parse_options(const int argc, const char *const *argv, Arguments& ar
 					throw_invalid_argument(argv[i - 1], argv[i], "Invalid host");
 			arguments.host = argv[i];
 		}
-		else if (std::strcmp(argv[i], "--port") == 0)
+		else if (std::strcmp(argv[i], "--port") == 0 || std::strcmp(argv[i], "-p") == 0)
 		{
 			if (!argv[i + 1])
 				throw_missing_argument(argv[i]);
@@ -147,6 +153,30 @@ static bool	parse_options(const int argc, const char *const *argv, Arguments& ar
 				if (!std::isdigit(argv[i][j]))
 					throw_invalid_argument(argv[i - 1], argv[i], "Invalid port");
 			arguments.port = std::atoi(argv[i]);
+		}
+		else if (std::strcmp(argv[i], "--pvp") == 0)
+		{
+			arguments.pvp = true;
+		}
+		else if (std::strcmp(argv[i], "--death") == 0 || std::strcmp(argv[i], "-d") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			for (int j = 0; argv[i][j]; j++)
+				if (!std::isdigit(argv[i][j]) && argv[i][j] != '-')
+					throw_invalid_argument(argv[i - 1], argv[i], "Expected a numeric positive value");
+			arguments.death = std::chrono::milliseconds(std::atoi(argv[i]));
+		}
+		else if (std::strcmp(argv[i], "--respawn") == 0 || std::strcmp(argv[i], "-r") == 0)
+		{
+			if (!argv[i + 1])
+				throw_missing_argument(argv[i]);
+			i++;
+			for (int j = 0; argv[i][j]; j++)
+				if (!std::isdigit(argv[i][j]) && argv[i][j] != '-')
+					throw_invalid_argument(argv[i - 1], argv[i], "Expected a numeric positive value");
+			arguments.respawn = std::chrono::milliseconds(std::atoi(argv[i]));
 		}
 		else
 			throw_unknown_option(argv[0], argv[i]);
@@ -188,6 +218,9 @@ static void	run_server(Arguments arguments)
 		.game_width = arguments.game_width,
 		.game_height = arguments.game_height,
 		.ns_per_tick = ns_per_tick,
+		.pvp = arguments.pvp,
+		.death = arguments.death,
+		.respawn = arguments.respawn,
 	};
 
 	Nibbler::Server::Init(config);
