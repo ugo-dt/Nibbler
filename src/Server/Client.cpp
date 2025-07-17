@@ -75,15 +75,14 @@ void	Server::RemoveClient(NibblerSocket socket)
 	}
 	Log::Warn("[SERVER] RemoveClient(): could not find client with socket {}", socket);
 }
-
 void	Server::Broadcast()
 {
 	const GameState& state = _game->GetState();
 
-	SquareType squares[state.width][state.height];
+	std::vector<SquareType> squares(state.width * state.height);
 
-	std::memset(&squares, 0, sizeof(SquareType) * state.width * state.height);
-	squares[state.apple.x][state.apple.y] = SquareType::Apple;
+	std::memset(squares.data(), 0, sizeof(SquareType) * state.width * state.height);
+	squares[state.apple.x * state.height + state.apple.y] = SquareType::Apple;
 
 	for (uint32_t i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -93,9 +92,9 @@ void	Server::Broadcast()
 		if (!state.snakes[i].Dead())
 		{
 			auto& snake = state.snakes[i].Body();
-			squares[snake[0].x][snake[0].y] = (SquareType)((1 << (i + 1)) + 1);
+			squares[snake[0].x * state.height + snake[0].y] = (SquareType)((1 << (i + 1)) + 1);
 			for (size_t j = 1; j < snake.size(); j++)
-			squares[snake[j].x][snake[j].y] = (SquareType)((1 << (i + 1)));
+				squares[snake[j].x * state.height + snake[j].y] = (SquareType)((1 << (i + 1)));
 		}
 
 		if (_clients[i].with_local_mutliplayer)
@@ -103,9 +102,9 @@ void	Server::Broadcast()
 			if (!state.snakes[i + MAX_CLIENTS].Dead())
 			{
 				const auto& snake = state.snakes[i + MAX_CLIENTS].Body();
-				squares[snake[0].x][snake[0].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)) + 1);
+				squares[snake[0].x * state.height + snake[0].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)) + 1);
 				for (size_t j = 1; j < snake.size(); j++)
-				squares[snake[j].x][snake[j].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)));
+					squares[snake[j].x * state.height + snake[j].y] = (SquareType)((1 << (i + MAX_CLIENTS + 1)));
 			}
 		}
 	}
@@ -115,7 +114,7 @@ void	Server::Broadcast()
 		if (_poll_fds[i].fd == INVALID_SOCKET)
 			continue;
 		if (_poll_fds[i].revents & POLLWRNORM)
-			if (send(_poll_fds[i].fd, (const char *)squares, sizeof(SquareType) * state.width * state.height, 0) <= 0)
+			if (send(_poll_fds[i].fd, (const char *)squares.data(), sizeof(SquareType) * state.width * state.height, 0) <= 0)
 				RemoveClient(_poll_fds[i].fd);
 	}
 }

@@ -27,12 +27,7 @@ include $(NIBBLER_PATH)/NibblerSDL/Makefile
 include $(NIBBLER_PATH)/NibblerGLFW/Makefile
 include $(NIBBLER_PATH)/NibblerAllegro/Makefile
 
-all: $(NAME) copy_libs
-
-copy_libs:
-# $(SILENT)cp $(NIBBLER_SDL_PATH)/SDL3/build/SDL3.dll $(NIBBLER_PATH)
-# $(SILENT)cp $(NIBBLER_GLFW_PATH)/glfw/build/src/glfw3.dll $(NIBBLER_PATH)
-# $(SILENT)cp $(NIBBLER_ALLEGRO_PATH)/allegro/build/bin/allegro-5.2.dll $(NIBBLER_PATH)
+all: $(NAME)
 
 $(NAME): $(LIB_OBJS) $(NIBBLER_SDL) $(NIBBLER_GLFW) $(NIBBLER_ALLEGRO) $(NIBBLER_OBJS)
 	$(SILENT)mkdir -p $(dir $@)

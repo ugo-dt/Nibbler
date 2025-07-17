@@ -111,7 +111,7 @@ static bool	parse_options(const int argc, const char *const *argv, Arguments& ar
 			else if (std::strcmp(argv[i], "Allegro") == 0 || std::strcmp(argv[i], "allegro") == 0)
 				arguments.api = Nibbler::RendererAPI::API::Allegro;
 			else
-				throw_invalid_argument(argv[i - 1], argv[i], "Available backends are:\n  - SDL3, SDL, sdl\n  - GLFW, glfw");
+				throw_invalid_argument(argv[i - 1], argv[i], "Available backends are:\n  - 'SDL3', 'GLFW', or 'Allegro'");
 			size = true;
 		}
 		else if (std::strcmp(argv[i], "-s") == 0 || std::strcmp(argv[i], "--server") == 0)

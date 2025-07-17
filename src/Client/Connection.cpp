@@ -139,9 +139,9 @@ void	Client::ReceivePacket()
 		}
 		if (_poll_fds[0].revents & (POLLRDNORM | POLLIN))
 		{
-			SquareType squares[_game.width][_game.height];
+			std::vector<SquareType> buffer(_game.width * _game.height);
 			ssize_t bytes = 0;
-			bytes = recv(_socket, (char *)squares, sizeof(SquareType) * _game.width * _game.height, 0);
+			bytes = recv(_socket, reinterpret_cast<char*>(buffer.data()), sizeof(SquareType) * _game.width * _game.height, 0);
 			if (bytes < 0)
 			{
 				Log::Warn("[CLIENT] ReceivePacket(): {}", GetLastNetworkError());
@@ -156,7 +156,7 @@ void	Client::ReceivePacket()
 			{
 				for (int x = 0; x < _game.width; x++)
 					for (int y = 0; y < _game.height; y++)
-						_game.squares[x][y] = squares[x][y];
+						_game.squares[x][y] = buffer[x * _game.height + y];
 			}
 		}
 	}
