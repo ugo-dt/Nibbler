@@ -19,8 +19,8 @@ NIBBLER_SRC = $(wildcard				\
 NIBBLER_OBJS = $(NIBBLER_SRC:.cpp=.o)
 INCLUDE += -I $(NIBBLER_PATH)/include -I $(NIBBLER_PATH)/include/Nibbler -I $(NIBBLER_PATH)
 
-CFLAGS		+= -DNIBBLER_PATH=\"$(NIBBLER_PATH)/\"
 CXXFLAGS	+= -DNIBBLER_PATH=\"$(NIBBLER_PATH)/\"
+LDFLAGS		+= -Wl,-rpath,$(NIBBLER_PATH)/NibblerSDL/SDL3/build -Wl,-rpath,$(NIBBLER_PATH)/NibblerGLFW/glfw/build/src
 
 # Nibbler rendering backends
 include $(NIBBLER_PATH)/NibblerSDL/Makefile

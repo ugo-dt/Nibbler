@@ -64,17 +64,18 @@ private:
 	void	DrawSquare(int8_t x, int8_t y, const vec4& color, bool filled = true);
 
 private:
-	ClientGame			_game;
-	RendererAPI::API	_request_new_api;
+	ClientGame _game;
+	RendererAPI::API _request_new_api;
 
-	NibblerSocket	_socket;
-	pollfd*			_poll_fds;
-	NibblerNfds_t	_nfds;
-	uint8_t			_id;
-	Direction		_requested_direction;
+	NibblerSocket _socket;
+	pollfd* _poll_fds;
+	NibblerNfds_t _nfds;
+	uint8_t _id;
+	Direction _requested_direction;
 
-	uint32_t		_fps;
-	bool			_local_multiplayer;
+	uint32_t _fps;
+	bool _local_multiplayer;
+	bool _show_debug;
 };
 
 } // Nibbler

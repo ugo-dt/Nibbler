@@ -28,6 +28,7 @@ glfwRendererAPI::glfwRendererAPI(const RendererAPIConfig& config)
 
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+	glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
 
     _window = glfwCreateWindow(config.width, config.height, config.title, nullptr, nullptr);
     NIB_ASSERT(_window != nullptr, "glfwCreateWindow() failed.");

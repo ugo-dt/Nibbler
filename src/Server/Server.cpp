@@ -275,9 +275,9 @@ void	Server::Run()
 
 	_running_mutex.lock();
 	_running = true;
-	running = true;
 	_running_mutex.unlock();
 	
+	running = true;
 	Log::Info("[SERVER] Listening on {}:{}", _host, _port);
 	while (running)
 	{
@@ -321,8 +321,6 @@ void	Server::Run()
 
 void	Server::RenderImGuiDebug()
 {
-	ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
-	ImGui::Begin("Nibbler Server");
 	ImGui::SeparatorText("Server");
 	ImGui::Text("Address: %s:%d", _host.c_str(), _port);
 	ImGui::Text("FPS: %d | TPS: %d", _fps, _tps);
@@ -340,10 +338,6 @@ void	Server::RenderImGuiDebug()
 	ImGui::SameLine();
 	if (ImGui::Button(_game->IsPvPEnabled() ? "Disable PvP" : "Enable PvP"))
 		_game->TogglePvP();
-	// ImGui::SameLine();
-	// if (ImGui::Button("Update"))
-	// 	Update();
-	ImGui::End();
 }
 
 } // Nibbler

@@ -15,7 +15,8 @@ Client::Client(const ClientConfig& config)
 	  _id(-1),
 	  _requested_direction(Direction::Right),
 	  _fps(0),
-	  _local_multiplayer(false)
+	  _local_multiplayer(false),
+	  _show_debug(false)
 {
 	Connect(config.host, config.port, config.timeout);
 
@@ -76,43 +77,47 @@ void	Client::Render()
 void	Client::RenderImGui()
 {
 	Renderer::BeginImGui();
-	
-	ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
-	ImGui::Begin("Nibbler Client");
-	ImGui::SeparatorText("Client");
-	ImGui::Text("ID: %d", _id);
-	ImGui::Text("FPS: %d", _fps);
-	// ImGui::Text("Current API:");
-	ImGui::RadioButton("SDL3",    (int *)&_request_new_api, RendererAPI::API::SDL3); ImGui::SameLine();
-	ImGui::RadioButton("GLFW",    (int *)&_request_new_api, RendererAPI::API::GLFW); ImGui::SameLine();
-	ImGui::RadioButton("Allegro", (int *)&_request_new_api, RendererAPI::API::Allegro);
-
-	if (!_local_multiplayer)
+	if (_show_debug)
 	{
-		if (ImGui::Button("Add player"))
+		ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
+		ImGui::Begin("Nibbler Client", nullptr,
+			ImGuiWindowFlags_NoDecoration |
+			ImGuiChildFlags_AlwaysAutoResize
+		);
+		ImGui::SeparatorText("Client");
+		ImGui::Text("ID: %d", _id);
+		ImGui::Text("FPS: %d", _fps);
+		ImGui::RadioButton("SDL3",    (int *)&_request_new_api, RendererAPI::API::SDL3); ImGui::SameLine();
+		ImGui::RadioButton("GLFW",    (int *)&_request_new_api, RendererAPI::API::GLFW); ImGui::SameLine();
+		ImGui::RadioButton("Allegro", (int *)&_request_new_api, RendererAPI::API::Allegro);
+
+		if (!_local_multiplayer)
 		{
-			_local_multiplayer = true;
-			SendEnableMultiplayerPacket();
+			if (ImGui::Button("Add player"))
+			{
+				_local_multiplayer = true;
+				SendEnableMultiplayerPacket();
+			}
 		}
-	}
-	else
-	{
-		if (ImGui::Button("Remove player"))
+		else
 		{
-			_local_multiplayer = false;
-			SendDisableMultiplayerPacket();
+			if (ImGui::Button("Remove player"))
+			{
+				_local_multiplayer = false;
+				SendDisableMultiplayerPacket();
+			}
 		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Exit"))
+			Close();
+
+		if (Server::Running())
+			Server::RenderImGuiDebug();
+
+		ImGui::End();
+		// ImGui::ShowDemoWindow();
 	}
-
-	ImGui::SameLine();
-	if (ImGui::Button("Exit"))
-		Close();
-	ImGui::End();
-
-	if (Server::Running())
-		Server::RenderImGuiDebug();
-
-	// ImGui::ShowDemoWindow();
 	Renderer::EndImGui();
 }
 
@@ -197,6 +202,9 @@ bool	Client::OnKeyPressed(KeyPressedEvent& event)
 			break;
 		case Key::F3:
 			_request_new_api = RendererAPI::API::Allegro;
+			break;
+		case Key::F4:
+			_show_debug = !_show_debug;
 			break;
 		case Key::Escape:
 			Close();
