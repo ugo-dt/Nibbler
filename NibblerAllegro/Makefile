@@ -23,7 +23,7 @@ ifeq ($(target),$(__WIN32__))
   NIBBLER_ALLEGRO_LDFLAGS = -L $(__allegro_path)/build/lib -lallegro.dll -lallegro_primitives.dll
   NIBBLER_ALLEGRO_SHARED = -s -shared -Wl,--subsystem,windows
 else
-  NIBBLER_ALLEGRO_LDFLAGS = $(shell pkg-config --libs allegro-5 allegro_primitives-5)
+  NIBBLER_ALLEGRO_LDFLAGS =  -L $(__allegro_path)/build/lib -lallegro -lallegro_primitives
   NIBBLER_ALLEGRO_SHARED = -shared
 endif
 

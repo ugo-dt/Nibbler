@@ -104,7 +104,8 @@ static bool	parse_options(const int argc, const char *const *argv, Arguments& ar
 			if (!argv[i + 1])
 				throw_missing_argument(argv[i]);
 			i++;
-			if (std::strcmp(argv[i], "SDL3") == 0 || std::strcmp(argv[i], "SDL") == 0 || std::strcmp(argv[i], "sdl") == 0)
+			if (std::strcmp(argv[i], "SDL3") == 0 || std::strcmp(argv[i], "SDL") == 0
+				|| std::strcmp(argv[i], "sdl") == 0 || std::strcmp(argv[i], "sdl3") == 0)
 				arguments.api = Nibbler::RendererAPI::API::SDL3;
 			else if (std::strcmp(argv[i], "GLFW") == 0 || std::strcmp(argv[i], "glfw") == 0)
 				arguments.api = Nibbler::RendererAPI::API::GLFW;
