@@ -11,6 +11,8 @@ NIBBLER_ALLEGRO_PATH = $(NIBBLER_PATH)/NibblerAllegro
 # Allegro
 __allegro_path	= $(NIBBLER_ALLEGRO_PATH)/allegro
 
+ALLEGRO_BUILD	= $(__allegro_path)/build
+
 NIBBLER_ALLEGRO	= $(NIBBLER_ALLEGRO_PATH)/NibblerAllegro$(DYLIB_EXT)
 
 NIBBLER_ALLEGRO_SRC 	= $(NIBBLER_ALLEGRO_PATH)/src/AllegroRendererAPI.cpp $(NIBBLER_ALLEGRO_PATH)/src/KeyCodes.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp
@@ -32,7 +34,11 @@ IMGUI_ALLEGRO_BACKEND_OBJS =  $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/
 
 all: $(NIBBLER_ALLEGRO)
 
-$(NIBBLER_ALLEGRO): $(NIBBLER_ALLEGRO_OBJS) $(__imgui_objs) $(IMGUI_ALLEGRO_BACKEND_OBJS)
+$(ALLEGRO_BUILD):
+	$(SILENT)cmake -S $(__allegro_path) -B $(ALLEGRO_BUILD) -DPREFER_STATIC_DEPS=ON -DWANT_STATIC_RUNTIME=ON
+	$(SILENT)cmake --build $(ALLEGRO_BUILD) --parallel
+
+$(NIBBLER_ALLEGRO): $(ALLEGRO_BUILD) $(NIBBLER_ALLEGRO_OBJS) $(__imgui_objs) $(IMGUI_ALLEGRO_BACKEND_OBJS)
 	$(SILENT)mkdir -p $(dir $@)
 	$(SILENT)$(CXX) $(NIBBLER_ALLEGRO_OBJS) $(__imgui_objs) $(IMGUI_ALLEGRO_BACKEND_OBJS) -o $(NIBBLER_ALLEGRO) $(NIBBLER_ALLEGRO_LDFLAGS) $(LDFLAGS) $(NIBBLER_ALLEGRO_SHARED)
 	@echo "$(COLOR_GREEN) $(NIBBLER_ALLEGRO) ready!$(COLOR_DEFAULT)"

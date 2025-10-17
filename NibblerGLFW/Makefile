@@ -11,6 +11,8 @@ NIBBLER_GLFW_PATH = $(NIBBLER_PATH)/NibblerGLFW
 # GLFW
 __glfw_path	= $(NIBBLER_GLFW_PATH)/glfw
 
+GLFW_BUILD	= $(__glfw_path)/build
+
 NIBBLER_GLFW	= $(NIBBLER_GLFW_PATH)/NibblerGLFW$(DYLIB_EXT)
 
 NIBBLER_GLFW_SRC 		= $(NIBBLER_GLFW_PATH)/src/glfwRendererAPI.cpp $(NIBBLER_GLFW_PATH)/src/Callbacks.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp
@@ -32,7 +34,11 @@ IMGUI_GLFW_BACKEND_OBJS =  $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/img
 
 all: $(NIBBLER_GLFW)
 
-$(NIBBLER_GLFW): $(NIBBLER_GLFW_OBJS) $(__imgui_objs) $(IMGUI_GLFW_BACKEND_OBJS)
+$(GLFW_BUILD):
+	$(SILENT)cmake -S $(__glfw_path) -B $(GLFW_BUILD) -DBUILD_SHARED_LIBS=ON
+	$(SILENT)cmake --build $(GLFW_BUILD) --parallel
+
+$(NIBBLER_GLFW): $(GLFW_BUILD) $(NIBBLER_GLFW_OBJS) $(__imgui_objs) $(IMGUI_GLFW_BACKEND_OBJS)
 	$(SILENT)mkdir -p $(dir $@)
 	$(SILENT)$(CXX) $(NIBBLER_GLFW_OBJS) $(__imgui_objs) $(IMGUI_GLFW_BACKEND_OBJS) -o $(NIBBLER_GLFW) $(NIBBLER_GLFW_LDFLAGS) $(LDFLAGS) $(NIBBLER_GLFW_SHARED)
 	@echo "$(COLOR_GREEN) $(NIBBLER_GLFW) ready!$(COLOR_DEFAULT)"

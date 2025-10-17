@@ -33,6 +33,7 @@ enum EventCategory
 class Event
 {
 public:
+	Event() = default;
 	virtual ~Event() = default;
 
 	bool 		handled = false;
@@ -46,6 +47,10 @@ public:
 	{
 		return GetCategoryFlags() & category;
 	}
+
+private:
+	Event(const Event&) = delete;
+	Event& operator=(const Event&) = delete;
 };
 
 class EventDispatcher

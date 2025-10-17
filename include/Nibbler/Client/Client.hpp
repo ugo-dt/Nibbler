@@ -16,9 +16,9 @@ std::string	GetLastNetworkError();
 
 struct ClientGame
 {
-	int8_t		width;
-	int8_t		height;
-	std::vector<std::vector<SquareType>>	squares;
+	int8_t width;
+	int8_t height;
+	std::vector<std::vector<SquareType>> squares;
 };
 
 struct ClientConfig
@@ -35,33 +35,36 @@ public:
 	Client(const ClientConfig& config);
 	~Client();
 
-	void	Run();
+	void Run();
 
 private:
-	void	InitRenderer(RendererAPI::API api);
+	Client(const Client&) = delete;
+	Client& operator=(const Client&) = delete;
 
-	void	Update();
-	void	Render();
-	void	RenderImGui();
+	void InitRenderer(RendererAPI::API api);
 
-	void	Close();
+	void Update();
+	void Render();
+	void RenderImGui();
 
-	void	Connect(const char *host, const int port, std::chrono::seconds timeout);
-	void	Disconnect();
+	void Close();
 
-	void	SendPacket(ClientPacket& packet);
-	void	SendEnableMultiplayerPacket();
-	void	SendDisableMultiplayerPacket();
-	void	SendInputPacket(ClientInput input);
+	void Connect(const char *host, const int port, std::chrono::seconds timeout);
+	void Disconnect();
 
-	void	ReceivePacket();
+	void SendPacket(ClientPacket& packet);
+	void SendEnableMultiplayerPacket();
+	void SendDisableMultiplayerPacket();
+	void SendInputPacket(ClientInput input);
+
+	void ReceivePacket();
 	
-	bool	OnEvent(Nibbler::Event& event);
-	bool	OnKeyPressed(Nibbler::KeyPressedEvent& event);
-	bool	OnWindowClose(WindowCloseEvent& event);
-	bool	OnWindowResize(NIB_UNUSED WindowResizeEvent& event);
+	bool OnEvent(Nibbler::Event& event);
+	bool OnKeyPressed(Nibbler::KeyPressedEvent& event);
+	bool OnWindowClose(WindowCloseEvent& event);
+	bool OnWindowResize(NIB_UNUSED WindowResizeEvent& event);
 
-	void	DrawSquare(int8_t x, int8_t y, const vec4& color, bool filled = true);
+	void DrawSquare(int8_t x, int8_t y, const vec4& color, bool filled = true);
 
 private:
 	ClientGame _game;

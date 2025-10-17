@@ -16,11 +16,12 @@ class Snake
 {
 public:
 	Snake();
+	~Snake() = default;
 
-	void	Init(int8_t game_width, int8_t game_height, uint32_t client_index);
+	void Init(int8_t game_width, int8_t game_height, uint32_t client_index);
 
-	void	Kill();
-	void	Tick(
+	void Kill();
+	void Tick(
 		int8_t game_width,
 		int8_t game_height,
 		uint32_t client_index,
@@ -28,36 +29,40 @@ public:
 		std::chrono::milliseconds no_collisions_timer_ms
 	);
 
-	void	SetPos(const i8vec2& pos);
-	void	SetDirection(Direction direction);
-	void	SetRequestedDirection(Direction direction);
-	void	AddSection();
+	void SetPos(const i8vec2& pos);
+	void SetDirection(Direction direction);
+	void SetRequestedDirection(Direction direction);
+	void AddSection();
 
-	bool	CollidesWithTail() const;
-	bool	HasSectionAt(int8_t x, int8_t y) const;
-	bool	IsPositionInTail(int8_t x, int8_t y) const;
-	bool	CanCollide() const;
-	bool	Dead() const;
+	bool CollidesWithTail() const;
+	bool HasSectionAt(int8_t x, int8_t y) const;
+	bool IsPositionInTail(int8_t x, int8_t y) const;
+	bool CanCollide() const;
+	bool Dead() const;
 
 	const std::vector<i8vec2>& Body() const;
 
-	Direction	GetDirection() const;
+	Direction GetDirection() const;
 
-	int8_t	PosX() const;
-	int8_t	PosY() const;
+	int8_t PosX() const;
+	int8_t PosY() const;
 
-	size_t	size() const;
+	size_t size() const;
 
 	std::vector<i8vec2>::const_iterator	begin() const;
 	std::vector<i8vec2>::const_iterator	end() const;
 
 private:
-	std::vector<i8vec2>	_body;
-	Direction			_direction;
-	Direction			_requested_direction;
-	Timer				_timer;
-	bool				_dead;
-	bool				_can_collide;
+	Snake(const Snake&) = delete;
+	Snake& operator=(const Snake&) = delete;
+
+private:
+	std::vector<i8vec2> _body;
+	Direction _direction;
+	Direction _requested_direction;
+	Timer _timer;
+	bool _dead;
+	bool _can_collide;
 };
 
 } // Nibbler

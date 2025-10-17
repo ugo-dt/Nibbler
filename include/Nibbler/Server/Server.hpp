@@ -32,6 +32,7 @@ struct ServerConfig
 class Server
 {
 public:
+
 	static void	Init(const ServerConfig& config);
 	static void	Shutdown(int signum = 0);
 
@@ -50,6 +51,11 @@ public:
 	static void	RenderImGuiDebug();
 
 private:
+	Server() = delete;
+	~Server() = delete;
+	Server(const Server&) = delete;
+	Server& operator=(const Server&) = delete;
+
 	static void	Tick();
 	static void	Update();
 	static void	AddInputToQueue(uint32_t client_index, ClientInput input);

@@ -76,12 +76,12 @@ if [ -d "$ALLEGRO_BUILD_DIR" ]; then
         echo "Allegro: force enabled, removing $ALLEGRO_BUILD_DIR"
         rm -rf "$ALLEGRO_BUILD_DIR"
     else
-        echo "Allegro: Already configured."
+        echo "Allegro: OK"
     fi
 fi
 if [ ! -d "$ALLEGRO_BUILD_DIR" ]; then
     cmake -S NibblerAllegro/allegro/ -B NibblerAllegro/allegro/build -DPREFER_STATIC_DEPS=ON -DWANT_STATIC_RUNTIME=ON
-    cmake --build NibblerAllegro/allegro/build
+    cmake --build NibblerAllegro/allegro/build --parallel
     echo "Allegro: configured."
 fi
 
@@ -92,12 +92,12 @@ if [ -d "$SDL3_BUILD_DIR" ]; then
         echo "SDL3: force enabled, removing $SDL3_BUILD_DIR"
         rm -rf "$SDL3_BUILD_DIR"
     else
-        echo "SDL3: Already configured."
+        echo "SDL3: OK"
     fi
 fi
 if [ ! -d "$SDL3_BUILD_DIR" ]; then
     cmake -S NibblerSDL/SDL3/ -B NibblerSDL/SDL3/build
-    cmake --build NibblerSDL/SDL3/build
+    cmake --build NibblerSDL/SDL3/build --parallel
     echo "SDL3: configured."
 fi
 
@@ -108,11 +108,11 @@ if [ -d "$GLFW_BUILD_DIR" ]; then
         echo "glfw: force enabled, removing $GLFW_BUILD_DIR"
         rm -rf "$GLFW_BUILD_DIR"
     else
-        echo "glfw: Already configured."
+        echo "glfw: OK"
     fi
 fi
 if [ ! -d "$GLFW_BUILD_DIR" ]; then
     cmake -S NibblerGLFW/glfw/ -B NibblerGLFW/glfw/build -DBUILD_SHARED_LIBS=ON
-    cmake --build NibblerGLFW/glfw/build
+    cmake --build NibblerGLFW/glfw/build --parallel
     echo "glfw: configured."
 fi

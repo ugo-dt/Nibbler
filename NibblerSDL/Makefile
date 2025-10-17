@@ -11,6 +11,8 @@ NIBBLER_SDL_PATH = $(NIBBLER_PATH)/NibblerSDL
 # SDL3
 __sdl3_path	= $(NIBBLER_SDL_PATH)/SDL3
 
+SDL3_BUILD	= $(__sdl3_path)/build
+
 NIBBLER_SDL	= $(NIBBLER_SDL_PATH)/NibblerSDL$(DYLIB_EXT)
 
 NIBBLER_SDL_SRC 	= $(NIBBLER_SDL_PATH)/src/SDL3RendererAPI.cpp $(NIBBLER_PATH)/src/Core/Log.cpp $(NIBBLER_PATH)/src/Renderer/RendererAPI.cpp
@@ -32,7 +34,11 @@ IMGUI_SDL_BACKEND_OBJS =  $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/imgu
 
 all: $(NIBBLER_SDL)
 
-$(NIBBLER_SDL): $(NIBBLER_SDL_OBJS) $(__imgui_objs) $(IMGUI_SDL_BACKEND_OBJS)
+$(SDL3_BUILD):
+	$(SILENT)cmake -S $(__sdl3_path) -B $(SDL3_BUILD)
+	$(SILENT)cmake --build $(SDL3_BUILD) --parallel
+
+$(NIBBLER_SDL): $(SDL3_BUILD) $(NIBBLER_SDL_OBJS) $(__imgui_objs) $(IMGUI_SDL_BACKEND_OBJS)
 	$(SILENT)mkdir -p $(dir $@)
 	$(SILENT)$(CXX) $(NIBBLER_SDL_OBJS) $(__imgui_objs) $(IMGUI_SDL_BACKEND_OBJS) -o $(NIBBLER_SDL) $(NIBBLER_SDL_LDFLAGS) $(LDFLAGS) $(NIBBLER_SDL_SHARED)
 	@echo "$(COLOR_GREEN) $(NIBBLER_SDL) ready!$(COLOR_DEFAULT)"

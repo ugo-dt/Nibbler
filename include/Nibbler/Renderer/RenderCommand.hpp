@@ -9,11 +9,11 @@ namespace Nibbler
 class Input
 {
 public:
-	static bool		IsKeyPressed(KeyCode key);
-	static bool		IsMouseButtonPressed(MouseButton button);
-	static vec2		GetMousePosition();
-	static float	GetMouseX();
-	static float	GetMouseY();
+	static bool IsKeyPressed(KeyCode key);
+	static bool IsMouseButtonPressed(MouseButton button);
+	static vec2 GetMousePosition();
+	static float GetMouseX();
+	static float GetMouseY();
 };
 
 class RenderCommand
@@ -34,6 +34,12 @@ public:
 	static void	SetDrawColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 	static void	DrawRect(const Rect& rect, const vec4& color);
 	static void	FillRect(const Rect& rect, const vec4& color);
+
+private:
+	RenderCommand() = delete;
+	~RenderCommand() = delete;
+	RenderCommand(const RenderCommand&) = delete;
+	RenderCommand& operator=(const RenderCommand&) = delete;
 
 private:
 	friend class Input;

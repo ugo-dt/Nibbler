@@ -43,7 +43,11 @@ public:
 	};
 
 public:
+	RendererAPI() = default;
 	virtual ~RendererAPI() = default;
+
+	RendererAPI(const RendererAPI&) = delete;
+	RendererAPI& operator=(const RendererAPI&) = delete;
 
 	virtual void	SetWindowTitle(const std::string& title) = 0;
 	virtual void	BeginFrame() = 0;
