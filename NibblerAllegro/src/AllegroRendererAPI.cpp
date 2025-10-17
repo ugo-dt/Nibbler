@@ -28,10 +28,13 @@ AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
 	al_install_keyboard();
     al_install_mouse();
 
-	al_set_new_window_position(INT_MAX, INT_MAX);
 	al_set_new_display_option(ALLEGRO_VSYNC, config.vsync, ALLEGRO_SUGGEST); // vsync 1 means forced on, 2 means forced off.
 	_display = al_create_display(config.width, config.height);
-	NIB_ASSERT(_display != nullptr, "al_create_display()");
+	if (!_display)
+	{
+		Log::Critical("Failed to create Allegro display");
+		std::exit(EXIT_FAILURE);
+	}
 
 	_queue = al_create_event_queue();
 	al_register_event_source(_queue, al_get_display_event_source(_display));

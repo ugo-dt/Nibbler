@@ -6,7 +6,7 @@ set -eu
 if [ -d "./NibblerAllegro/allegro/build" ]; then
     echo "Allegro: Already configured."
 else
-    cmake -S NibblerAllegro/allegro/ -B NibblerAllegro/allegro/build
+    cmake -S NibblerAllegro/allegro/ -B NibblerAllegro/allegro/build -DPREFER_STATIC_DEPS=ON -DWANT_STATIC_RUNTIME=ON
     cmake --build NibblerAllegro/allegro/build
     echo "Allegro: configured."
 fi

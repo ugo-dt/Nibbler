@@ -82,7 +82,8 @@ void	Client::RenderImGui()
 		ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
 		ImGui::Begin("Nibbler Client", nullptr,
 			ImGuiWindowFlags_NoDecoration |
-			ImGuiChildFlags_AlwaysAutoResize
+			ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoMove
 		);
 		ImGui::SeparatorText("Client");
 		ImGui::Text("ID: %d", _id);
@@ -134,14 +135,6 @@ void	Client::Run()
 		// Poll events
 		Renderer::BeginFrame();
 
-		// API might have changed
-		if (_request_new_api != Renderer::GetCurrentAPI())
-		{
-			InitRenderer(_request_new_api);
-			_request_new_api = Renderer::GetCurrentAPI();
-			continue;
-		}
-
 		auto currentTime = Clock::now();
 		lastFrameTime = currentTime;
 
@@ -169,6 +162,12 @@ void	Client::Run()
 				auto sleepDuration = std::chrono::nanoseconds(NS_PER_FRAME - frameDuration);
 				std::this_thread::sleep_for(sleepDuration);
 			}
+		}
+
+		if (_request_new_api != Renderer::GetCurrentAPI())
+		{
+			InitRenderer(_request_new_api);
+			_request_new_api = Renderer::GetCurrentAPI();
 		}
 	}
 }
