@@ -13,16 +13,14 @@ void	Client::Connect(const char *host, const int port, std::chrono::seconds time
 	NIB_NOTUSED(status);
 
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
-	NIB_ASSERT(_socket != INVALID_SOCKET, "socket(): {}", GetLastNetworkError());
-	
 	if (_socket == INVALID_SOCKET)
-		return ;
-	
+		Log::Critical("Failed to create a socket! Reason: {}", GetLastNetworkError());
 	Log::Info("[CLIENT] Created socket {}", _socket);
 
 	opt = 1;
 	status = setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof(int));
-	NIB_ASSERT(status != -1, "setsockopt(): {}", GetLastNetworkError());
+	if (status == -1)
+		Log::Critical("setsockopt(): {}", GetLastNetworkError());
 
 	addr.sin_family = AF_INET;
 	if (std::strcmp(host, "localhost") == 0)
@@ -125,7 +123,8 @@ void	Client::ReceivePacket()
 #else
 	int poll_ret = poll(_poll_fds, _nfds, 0);
 #endif
-	NIB_ASSERT(poll_ret != -1, "poll(): {}", GetLastNetworkError());
+	if (poll_ret == -1)
+		Log::Critical("poll(): {}", GetLastNetworkError());
 
 	if (poll_ret > 0)
 	{

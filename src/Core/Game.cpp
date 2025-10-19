@@ -46,6 +46,9 @@ void	Game::CheckSnakeCollisions(uint32_t snake_index)
 {
 	Snake& snake = _state.snakes[snake_index];
 
+	if (snake.Dead() || snake.size() == 0)
+		return ;
+
 	if (snake.PosX() < 0 || snake.PosY() < 0 || snake.PosX() >= _state.width || snake.PosY() >= _state.height
 		|| snake.CollidesWithTail())
 	{
@@ -62,6 +65,10 @@ void	Game::CheckSnakeCollisions(uint32_t snake_index)
 			// Snakes are allowed to overlap with other snake heads.
 			// They cannot overlap with a tail.
 			auto& other_snake = _state.snakes[i];
+
+			if (other_snake.Dead())
+				continue;
+
 			if (snake.CanCollide() && other_snake.CanCollide()
 				&& other_snake.IsPositionInTail(snake.PosX(), snake.PosY()))
 			{
@@ -78,8 +85,8 @@ void	Game::CheckSnakeCollisions(uint32_t snake_index)
 		Log::Info("Snake {} won!", snake_index);
 		KillSnake(snake_index);
 	}
-	
-	if (snake.PosX() == _state.apple.x && snake.PosY() == _state.apple.y)
+
+	if (!snake.Dead() && snake.PosX() == _state.apple.x && snake.PosY() == _state.apple.y)
 	{
 		snake.AddSection();
 		SpawnApple();

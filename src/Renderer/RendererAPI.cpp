@@ -47,16 +47,20 @@ RendererAPI*	RendererAPI::Create(API api, const RendererAPIConfig& config)
 
 #ifdef _WIN32
 	HANDLE = LoadLibrary(library_name);
-	NIB_ASSERT(HANDLE != nullptr, "LoadLibrary(): Cannot load library '{}': {}", library_name, GetLastError());
+	if (HANDLE == nullptr)
+		Log::Critical("LoadLibrary(): Cannot load library '{}': {}", library_name, GetLastError());
 
 	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)((void *)GetProcAddress(HANDLE, "Nibbler_CreateRenderAPI"));
-	NIB_ASSERT(Nibbler_CreateRenderAPI, "No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
+	if (Nibbler_CreateRenderAPI == nullptr)
+		Log::Critical("No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
 #else
 	HANDLE = dlopen(library_name, RTLD_NOW);
-	NIB_ASSERT(HANDLE != nullptr, "dlopen(): Cannot load library '{}': {}", library_name, dlerror());
+	if (HANDLE == nullptr)
+		Log::Critical("dlopen(): Cannot load library '{}': {}", library_name, dlerror());
 
 	CreateRenderAPICallback *Nibbler_CreateRenderAPI = (CreateRenderAPICallback *)dlsym(HANDLE, "Nibbler_CreateRenderAPI");
-	NIB_ASSERT(Nibbler_CreateRenderAPI, "No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
+	if (Nibbler_CreateRenderAPI == nullptr)
+		Log::Critical("No entry found with name {} for library '{}'", "Nibbler_CreateRenderAPI", library_name);
 #endif
 	return Nibbler_CreateRenderAPI(config);
 }

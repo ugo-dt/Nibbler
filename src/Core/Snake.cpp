@@ -110,11 +110,13 @@ void	Snake::SetRequestedDirection(Direction direction)
 
 void	Snake::AddSection()
 {
+	NIB_ASSERT(!_body.empty());
 	_body.emplace_back(_body[_body.size() - 1]);
 }
 
 bool	Snake::CollidesWithTail() const
 {
+	NIB_ASSERT(!_body.empty());
 	for (size_t i = 1; i < _body.size(); i++)
 		if (_body[i].x == _body[0].x && _body[i].y == _body[0].y)
 			return true;
@@ -123,6 +125,7 @@ bool	Snake::CollidesWithTail() const
 
 bool	Snake::HasSectionAt(int8_t x, int8_t y) const
 {
+	NIB_ASSERT(!_body.empty());
 	for (size_t i = 0; i < _body.size(); i++)
 		if (_body[i].x == x && _body[i].y == y)
 			return true;
@@ -131,6 +134,7 @@ bool	Snake::HasSectionAt(int8_t x, int8_t y) const
 
 bool	Snake::IsPositionInTail(int8_t x, int8_t y) const
 {
+	NIB_ASSERT(!_body.empty());
 	for (size_t i = 1; i < _body.size(); i++)
 		if (_body[i].x == x && _body[i].y == y)
 			return true;
@@ -159,11 +163,13 @@ Direction	Snake::GetDirection() const
 
 int8_t	Snake::PosX() const
 {
+	NIB_ASSERT(!_body.empty());
 	return _body[0].x;
 }
 
 int8_t	Snake::PosY() const
 {
+	NIB_ASSERT(!_body.empty());
 	return _body[0].y;
 }
 

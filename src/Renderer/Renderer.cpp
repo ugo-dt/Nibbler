@@ -90,13 +90,17 @@ void	Renderer::EndFrame()
 	RenderCommand::_renderer_api->EndFrame();
 }
 
-void		Renderer::BeginImGui()
+void	Renderer::BeginImGui()
 {
+	NIB_ASSERT(RenderCommand::_renderer_api);
+
 	RenderCommand::_renderer_api->BeginImGui();
 }
 
-void		Renderer::EndImGui()
+void	Renderer::EndImGui()
 {
+	NIB_ASSERT(RenderCommand::_renderer_api);
+
 	RenderCommand::_renderer_api->EndImGui();
 }
 

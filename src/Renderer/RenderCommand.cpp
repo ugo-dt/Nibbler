@@ -14,57 +14,79 @@ void	RenderCommand::Init(RendererAPI::API api, const RendererAPIConfig& config)
 
 void	RenderCommand::Shutdown()
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	RendererAPI::Destroy(_renderer_api);
 	_renderer_api = nullptr;
 }
 
 void	RenderCommand::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetViewport(x, y, width, height);
 }
 
 void	RenderCommand::SetClearColor(const vec4& color)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetClearColor(color);
 }
 
 void	RenderCommand::SetClearColor(float r, float g, float b, float a)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetClearColor({r, g, b, a});
 }
 
 void	RenderCommand::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetClearColor({r / 255.f, g / 255.f, b / 255.f, a / 255.f});
 }
 
 void	RenderCommand::Clear()
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->Clear();
 }
 
 void	RenderCommand::SetDrawColor(const vec4& color)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetClearColor(color);
 }
 
 void	RenderCommand::SetDrawColor(float r, float g, float b, float a)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetClearColor({r, g, b, a});
 }
 
 void	RenderCommand::SetDrawColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->SetClearColor({r / 255.f, g / 255.f, b / 255.f, a / 255.f});
 }
 
 void	RenderCommand::DrawRect(const Rect& rect, const vec4& color)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->DrawRect(rect, color);
 }
 
 void	RenderCommand::FillRect(const Rect& rect, const vec4& color)
 {
+	NIB_ASSERT(_renderer_api != nullptr, "RendererAPI not initialized!");
+
 	_renderer_api->FillRect(rect, color);
 }
 

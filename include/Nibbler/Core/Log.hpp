@@ -103,6 +103,7 @@ Log::Critical(std::string_view fmt, Args&&... args)
 {
 	for (auto stream : _error_streams)
 		Log::Print(*stream, LOG_COLOR_RED, "CRITICAL", fmt, std::make_format_args(args...));
+	std::abort();
 }
 
 } // Nibbler

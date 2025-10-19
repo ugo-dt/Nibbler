@@ -30,7 +30,8 @@ void	Server::Init(const ServerConfig& config)
 	_ns_per_tick = config.ns_per_tick;
 
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
-	NIB_ASSERT(_socket != INVALID_SOCKET, "socket(): {}", GetLastNetworkError());
+	if (_socket == INVALID_SOCKET)
+		Log::Critical("[SERVER] Could not create socket! Reason: {}", GetLastNetworkError());
 
 	opt = 1;
 #ifdef _WIN32
@@ -38,8 +39,8 @@ void	Server::Init(const ServerConfig& config)
 #else
 	status = setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof(int));
 #endif
-	NIB_ASSERT(status != -1, "setsockopt(): {}", GetLastNetworkError());
-	
+	if (status == -1)
+		Log::Critical("setsockopt(): {}", GetLastNetworkError());
 	Log::Info("[SERVER] Created socket {}", _socket);
 
 	_nfds = MAX_CLIENTS + 1;
@@ -91,14 +92,17 @@ void	Server::BindSocketAndListen(const char *host, const int port)
 #ifdef _WIN32
 	u_long mode = 1;
 	status = ioctlsocket(_socket, FIONBIO, &mode);
-	NIB_ASSERT(status == NO_ERROR, "ioctlsocket(): {}", GetLastNetworkError());
+	if (status != NO_ERROR)
+		Log::Critical("ioctlsocket(): {}", GetLastNetworkError());
 #else
 	status = fcntl(_socket, F_SETFL, O_NONBLOCK);
-	NIB_ASSERT(status != -1, "fcntl(): {}", GetLastNetworkError());
+	if (status == -1)
+		Log::Critical("fcntl(): {}", GetLastNetworkError());
 #endif
 
 	status = listen(_socket, MAX_CLIENTS);
-	NIB_ASSERT(status != -1, "listen(): {}", GetLastNetworkError());
+	if (status == -1)
+		Log::Critical("[SERVER] Can't listen to incoming connections! Reason: {}", GetLastNetworkError());
 
 	_host = inet_ntoa(addr.sin_addr);
 	_port = port;
@@ -228,7 +232,8 @@ void	Server::Update()
 #else
 	poll_ret = poll(_poll_fds, _nfds, 0);
 #endif
-	NIB_ASSERT(poll_ret != -1, "poll: {}", GetLastNetworkError());
+	if (poll_ret == -1)
+		Log::Critical("poll: {}", GetLastNetworkError());
 
 	if (poll_ret > 0)
 	{

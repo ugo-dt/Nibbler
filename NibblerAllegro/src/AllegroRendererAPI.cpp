@@ -13,28 +13,22 @@ NIBBLER_API RendererAPI* NIBBLERCALL	Nibbler_CreateRenderAPI(const RendererAPICo
 
 AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
 	: _event_callback(config.event_callback),
-	  _winsize(config.width, config.height)
+	_winsize(config.width, config.height)
 {
-    Log::Init();
-#ifdef NIB_RELEASE
-	al_install_system(ALLEGRO_VERSION_INT, nullptr);
-#else
+	Log::Init();
 	bool status = al_install_system(ALLEGRO_VERSION_INT, nullptr);
-	NIB_ASSERT(status == true, "al_install_system()");
+	if (status == false)
+		Log::Critical("Could not initialize Allegro!");
 	Log::Info("Initialized Allegro.");
-#endif
 
 	al_init_primitives_addon();
 	al_install_keyboard();
-    al_install_mouse();
+	al_install_mouse();
 
 	al_set_new_display_option(ALLEGRO_VSYNC, config.vsync, ALLEGRO_SUGGEST); // vsync 1 means forced on, 2 means forced off.
 	_display = al_create_display(config.width, config.height);
 	if (!_display)
-	{
 		Log::Critical("Failed to create Allegro display");
-		std::exit(EXIT_FAILURE);
-	}
 
 	_queue = al_create_event_queue();
 	al_register_event_source(_queue, al_get_display_event_source(_display));
@@ -52,15 +46,15 @@ AllegroRendererAPI::AllegroRendererAPI(const RendererAPIConfig& config)
 	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
-    ImGui::StyleColorsDark();
+	ImGui::StyleColorsDark();
 
-    ImGui_ImplAllegro5_Init(_display);
+	ImGui_ImplAllegro5_Init(_display);
 }
 
 AllegroRendererAPI::~AllegroRendererAPI()
 {
-    ImGui_ImplAllegro5_Shutdown();
-    ImGui::DestroyContext();
+	ImGui_ImplAllegro5_Shutdown();
+	ImGui::DestroyContext();
 
 	al_destroy_event_queue(_queue);
 	al_uninstall_mouse();
@@ -131,7 +125,7 @@ void	AllegroRendererAPI::BeginFrame()
 	{
 		while (al_get_next_event(_queue, &event))
 		{
-            ImGui_ImplAllegro5_ProcessEvent(&event);
+			ImGui_ImplAllegro5_ProcessEvent(&event);
 			switch (event.type)
 			{
 				case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -184,7 +178,7 @@ bool	AllegroRendererAPI::GetVSync() const
 
 ivec2 AllegroRendererAPI::GetWindowSize() const
 {
-    return ivec2{al_get_display_width(_display), al_get_display_height(_display)};
+	return ivec2{al_get_display_width(_display), al_get_display_height(_display)};
 }
 
 bool	AllegroRendererAPI::IsKeyPressed(KeyCode key)
@@ -205,17 +199,17 @@ vec2	AllegroRendererAPI::GetMousePosition() const
 {
 	int x, y;
 	al_get_mouse_cursor_position(&x, &y);
-    return vec2{static_cast<float>(x), static_cast<float>(y)};
+	return vec2{static_cast<float>(x), static_cast<float>(y)};
 }
 
 float	AllegroRendererAPI::GetMouseX() const
 {
-    return GetMousePosition().x;
+	return GetMousePosition().x;
 }
 
 float	AllegroRendererAPI::GetMouseY() const
 {
-    return GetMousePosition().y;
+	return GetMousePosition().y;
 }
 
 void	AllegroRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

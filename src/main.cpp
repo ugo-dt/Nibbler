@@ -16,16 +16,16 @@ struct Arguments
 };
 
 static const char *help_message = R"(Usage: nibbler [options]
-  Options:
-    --help        Show the usage message and exit.
-    --backend  -b Specify the rendering backend.
-    --width    -w Set the width of the game area. Use with --height.
-    --height   -h Set the height of the game area. Use with --width.
-    --server,  -s Only run the server, without a game window.
-    --client,  -c Only run the client, without a server. A game server should be running (see --host, --port).
-    --timeout     Set the timeout.
-    --host        Set the host server address.
-    --port     -p Set the host server port.
+Options:
+	--help        Show the usage message and exit.
+	--backend  -b Specify the rendering backend.
+	--width    -w Set the width of the game area. Use with --height.
+	--height   -h Set the height of the game area. Use with --width.
+	--server,  -s Only run the server, without a game window.
+	--client,  -c Only run the client, without a server. A game server should be running (see --host, --port).
+	--timeout     Set the timeout.
+	--host        Set the host server address.
+	--port     -p Set the host server port.
 	--pvp         Enable PvP. Snakes can kill each other.
 	--death    -d Set the death timer duration in ms (default=1000ms).
 	--respawn  -r Set the respawn invincibility timer duration in ms (default=1000ms).
@@ -242,7 +242,8 @@ int	main(int argc, char **argv)
 	int status;
 	WSADATA	wsaData;
 	status = WSAStartup(WINSOCK_VERSION, &wsaData);
-	NIB_ASSERT(status == 0, "WSAStartup(): {}", WSAGetLastError());
+	if (status != 0)
+		Nibbler::Log::Critical("WSAStartup(): {}", WSAGetLastError());
 
 	NIB_NOTUSED(status);
 #endif

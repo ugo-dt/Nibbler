@@ -15,12 +15,14 @@ SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
 	NIB_NOTUSED(status);
 
 	Log::Init();
-	status = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-	NIB_ASSERT(status == true && "Failed to init SDL");
+	status = SDL_Init(SDL_INIT_VIDEO);
+	if (status == false)
+		Log::Critical("Failed to initialize SDL");
 	Log::Info("Initialized SDL.");
 
 	status = SDL_CreateWindowAndRenderer(config.title, config.width, config.height, 0, &_window, &_renderer);
-	NIB_ASSERT(status == true, "SDL_CreateWindowAndRenderer(): {}", SDL_GetError());
+	if (status == false)
+		Log::Critical("Failed to create a window! Reason: {}", SDL_GetError());
 
 	SDL_SetRenderVSync(_renderer, config.vsync);
 	SDL_SetRenderLogicalPresentation(_renderer, config.width, config.height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
@@ -36,17 +38,17 @@ SDL3RendererAPI::SDL3RendererAPI(const RendererAPIConfig& config)
 	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
-    ImGui::StyleColorsDark();
+	ImGui::StyleColorsDark();
 
-    ImGui_ImplSDL3_InitForSDLRenderer(_window, _renderer);
-    ImGui_ImplSDLRenderer3_Init(_renderer);
+	ImGui_ImplSDL3_InitForSDLRenderer(_window, _renderer);
+	ImGui_ImplSDLRenderer3_Init(_renderer);
 }
 
 SDL3RendererAPI::~SDL3RendererAPI()
 {
-    ImGui_ImplSDLRenderer3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
+	ImGui_ImplSDLRenderer3_Shutdown();
+	ImGui_ImplSDL3_Shutdown();
+	ImGui::DestroyContext();
 
 	if (_renderer)
 		SDL_DestroyRenderer(_renderer);

@@ -32,10 +32,14 @@ endif
 IMGUI_ALLEGRO_BACKEND_SRC = $(__imgui_path)/backends/imgui_impl_allegro5.cpp
 IMGUI_ALLEGRO_BACKEND_OBJS =  $(patsubst $(__imgui_path)/%.cpp,$(__lib_obj_dir)/imgui/%.o,$(IMGUI_ALLEGRO_BACKEND_SRC))
 
+ifeq ($(target),$(__WIN32__))
+  CMAKE_FLAGS = -DPREFER_STATIC_DEPS=ON -DWANT_STATIC_RUNTIME=ON
+endif
+
 all: $(NIBBLER_ALLEGRO)
 
 $(ALLEGRO_BUILD):
-	$(SILENT)cmake -S $(__allegro_path) -B $(ALLEGRO_BUILD) -DPREFER_STATIC_DEPS=ON -DWANT_STATIC_RUNTIME=ON
+	$(SILENT)cmake -S $(__allegro_path) -B $(ALLEGRO_BUILD) $(CMAKE_FLAGS)
 	$(SILENT)cmake --build $(ALLEGRO_BUILD) --parallel
 
 $(NIBBLER_ALLEGRO): $(ALLEGRO_BUILD) $(NIBBLER_ALLEGRO_OBJS) $(__imgui_objs) $(IMGUI_ALLEGRO_BACKEND_OBJS)
