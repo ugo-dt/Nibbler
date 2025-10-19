@@ -1,5 +1,5 @@
 # Nibbler
-Cross-platform ultiplayer Snake game.
+Cross-platform multiplayer Snake game.
 
 ## Features
 - A Snake game.
@@ -9,20 +9,13 @@ Cross-platform ultiplayer Snake game.
 - PvP: Snakes can kill each other.
 - ImGui debug interface
 
-## Build on Windows, macOS and Linux
-Clone and build the project.
+## Build
+Clone and build the project on Linux, macOS or Windows (WSL2, using MinGW)
+
 ```sh
 git clone https://github.com/ugo-dt/Nibbler.git --recursive
 cd Nibbler
-./configure.sh
 make
-```
-
-## macOS instructions
-Set the DYLD_LIBRARY_PATH library before running the game.
-In the project root directory, run the following command:
-```sh
-export DYLD_LIBRARY_PATH=./NibblerSDL/SDL3/build:./NibblerGLFW/glfw/build/src:$DYLD_LIBRARY_PATH
 ```
 
 ## Known bugs
