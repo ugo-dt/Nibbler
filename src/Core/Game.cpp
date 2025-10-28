@@ -55,6 +55,9 @@ void	Game::CheckSnakeCollisions(uint32_t snake_index)
 		KillSnake(snake_index);
 	}
 
+	if (snake.Dead())
+		return ;
+
 	if (_state.pvp)
 	{
 		for (uint32_t i = 0; i < _state.snakes.size(); i++)

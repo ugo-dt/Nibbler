@@ -3,16 +3,16 @@
 struct Arguments
 {
 	Nibbler::RendererAPI::API api = Nibbler::RendererAPI::API::SDL3;
-	int8_t	game_width = 20;
-	int8_t	game_height = 20;
-	bool	parent = true;
-	bool	no_client = false;
+	int8_t game_width = 20;
+	int8_t game_height = 20;
+	bool parent = true;
+	bool no_client = false;
 	std::chrono::seconds timeout = std::chrono::seconds(10);
 	const char* host = "localhost";
-	int			port = 8080;
-	bool		pvp = false;
-	std::chrono::milliseconds	death = std::chrono::milliseconds(1000);
-	std::chrono::milliseconds	respawn = std::chrono::milliseconds(1000);
+	int port = 8080;
+	bool pvp = false;
+	std::chrono::milliseconds death = std::chrono::milliseconds(1000);
+	std::chrono::milliseconds respawn = std::chrono::milliseconds(1000);
 };
 
 static const char *help_message = R"(Usage: nibbler [options]
